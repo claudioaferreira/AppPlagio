@@ -4,7 +4,7 @@
 Este proyecto es una aplicación web avanzada para la validación de la originalidad del texto. Utiliza un enfoque de análisis semántico para entender el significado del texto, lo que le permite identificar plagio por paráfrasis. Además, incluye un segundo componente que clasifica si un texto fue escrito por un humano o por una inteligencia artificial.
 
 ---
-##🚀 Cómo Poner en Marcha el Proyecto
+## 🚀 Cómo Poner en Marcha el Proyecto
 
 Sigue estos pasos para configurar y ejecutar el proyecto en tu máquina local.
 
