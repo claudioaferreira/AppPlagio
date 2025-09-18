@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados de Detección AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="results-container">
+        <h1>Resultado del Análisis</h1>
+        <p>La categoría del documento es:</p>
+        <div class="ai-result-box">
+            <p><strong>{{ result }}</strong></p>
+        </div>
+        <br>
+
+        <h2>Rendimiento General del Modelo</h2>
+        <pre>{{ report }}</pre>
+
+        <a href="/ai-detector-page">Volver a intentar</a>
+        <br>
+        <a href="/">Volver a la página principal</a>
+    </div>
+</body>
+</html>

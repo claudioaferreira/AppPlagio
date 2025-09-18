@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados de Plagio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="results-container">
+        <h1>Resultados del Análisis</h1>
+
+        {% if highest_similarity > 0 %}
+            <p class="highest-similarity">El porcentaje de similitud más alto encontrado es: <strong>{{ "%.2f"|format(highest_similarity) }}%</strong></p>
+            <br>
+            <p>Principales coincidencias:</p>
+            <ul>
+                {% for result in results %}
+                    <li>
+                        Documento: <strong>{{ result.document_id }}</strong>
+                        <br>
+                        Similitud: <strong>{{ "%.2f"|format(result.similarity_score) }}%</strong>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-plagiarism">No se encontraron coincidencias de plagio significativas. 🎉</p>
+        {% endif %}
+        <br>
+        <a href="/">Volver</a>
+    </div>
+</body>
+</html>

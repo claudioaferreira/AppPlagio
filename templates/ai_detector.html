@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detector de Contenido AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Detector de Contenido AI</h1>
+        <p>Analiza tu documento para determinar si fue escrito por un humano o una IA.</p>
+        <form action="/ai-detect" method="post" enctype="multipart/form-data">
+            <label for="documento">Selecciona un documento para analizar:</label><br><br>
+            <input type="file" id="documento" name="documento" required><br><br>
+            <input type="submit" value="Analizar Texto">
+        </form>
+        <a href="/">Volver a la página principal</a>
+    </div>
+</body>
+</html>
