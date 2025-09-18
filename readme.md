@@ -88,13 +88,13 @@ python app.py
 
 ## 🛠 Tecnologías Utilizadas
 
-Backend: Python con Flask.
-Inteligencia Artificial:
-Embeddings: sentence-transformers para análisis semántico.
-Clasificación: scikit-learn y TF-IDF para detectar texto generado por IA.
-Base de Datos: SQL Server 2022 con capacidades de búsqueda de vectores.
-Frontend: HTML y CSS con una interfaz de usuario moderna.
-Gestión de Datos: pandas y joblib.
+- Backend: Python con Flask.
+- Inteligencia Artificial:
+-- Embeddings: sentence-transformers para análisis semántico.
+-- Clasificación: scikit-learn y TF-IDF para detectar texto generado por IA.
+- Base de Datos: SQL Server 2022 con capacidades de búsqueda de vectores.
+- Frontend: HTML y CSS con una interfaz de usuario moderna.
+- Gestión de Datos: pandas y joblib.
 
 ---
 
