@@ -15,6 +15,8 @@ Asegúrate de que tu máquina tenga instaladas las siguientes herramientas:
 - **Controlador ODBC para SQL Server**: Necesario para que Python se conecte a la base de datos.
 - **Git**: Para clonar el repositorio.
 
+---
+
 ### 2. Configuración del Entorno de Python
 Clona el repositorio:
 ```bash
@@ -31,6 +33,7 @@ Instala las dependencias:
 ```bash
 pip install -r requirements.txt
 ```
+---
 
 ### 3. Configuración de la Base de Datos
    
@@ -63,6 +66,8 @@ Descarga el corpus ([aqui](https://www.google.com/search?q=https://pan.webis.de/
 Solicita acceso al corpus ([aqui](https://www.google.com/search?q=https://pan.webis.de/clef25/pan25-web/ai-generated-text-detection.html)) llenando el formulario.
 - Una vez que lo tengas, descomprime el archivo y coloca los archivos .jsonl en una nueva carpeta llamada pan-25-ai-detection.
   
+  ---
+
 ### 6. Ejecutar la Aplicación
 - Cargar el Corpus de Plagio en la DB:
 - Abre generate_embeddingsSQL.py y configura tus credenciales de SQL Server.
@@ -75,6 +80,8 @@ Solicita acceso al corpus ([aqui](https://www.google.com/search?q=https://pan.we
 - Abre tu navegador y ve a http://127.0.0.1:5000.
 - El modelo de detección de IA se entrenará automáticamente la primera vez que accedas a la página del detector de IA, por lo que la primera carga será más lenta.
 
+---
+
 ## 🛠 Tecnologías Utilizadas
 
 Backend: Python con Flask.
@@ -85,6 +92,7 @@ Base de Datos: SQL Server 2022 con capacidades de búsqueda de vectores.
 Frontend: HTML y CSS con una interfaz de usuario moderna.
 Gestión de Datos: pandas y joblib.
 
+---
 
 ## ⚠️ Resolución de Problemas
 Si tienes errores de conexión a la base de datos, revisa que tus credenciales en generate_embeddingsSQL.py y app.py sean correctas y que el usuario sa esté habilitado.
