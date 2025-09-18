@@ -75,7 +75,11 @@ Solicita acceso al corpus ([aqui](https://www.google.com/search?q=https://pan.we
 - Este proceso es de una sola vez y puede tardar varios minutos en cargar los embeddings en la base de datos.
 - Ejecutar la App Principal:
 - Abre app.py y configura las mismas credenciales de SQL Server.
-- Corre el servidor de Flask: python app.py
+- Corre el servidor de Flask: 
+
+```bash 
+python app.py
+```
 - Usar la Aplicación:
 - Abre tu navegador y ve a http://127.0.0.1:5000.
 - El modelo de detección de IA se entrenará automáticamente la primera vez que accedas a la página del detector de IA, por lo que la primera carga será más lenta.
