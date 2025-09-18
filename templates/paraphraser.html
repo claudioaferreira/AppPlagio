@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parafraseador de Texto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Parafraseador de Texto</h1>
+        <p>Ingresa un texto para obtener una versión parafraseada por IA.</p>
+        <form action="/paraphrase" method="post">
+            <textarea name="original_text" id="paraphrase-textarea" rows="10" cols="50" required placeholder="Escribe tu texto aquí..." maxlength="300"></textarea><br>
+            <span id="char-counter">0/300</span><br><br>
+            <input type="submit" value="Parafrasear">
+        </form>
+        <a href="/">Volver</a>
+    </div>
+
+    <script>
+        // JavaScript para el contador de caracteres
+        const textarea = document.getElementById('paraphrase-textarea');
+        const counter = document.getElementById('char-counter');
+        const maxLength = textarea.getAttribute('maxlength');
+
+        textarea.addEventListener('input', () => {
+            const currentLength = textarea.value.length;
+            counter.textContent = `${currentLength}/${maxLength}`;
+        });
+    </script>
+</body>
+</html>

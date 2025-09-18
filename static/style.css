@@ -148,3 +148,13 @@ a:hover {
 .button-link:hover {
     background-color: #218838;
 }
+
+/* Add to your existing style.css */
+#char-counter {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: -10px;
+    display: block;
+    text-align: right;
+    padding-right: 10px;
+}

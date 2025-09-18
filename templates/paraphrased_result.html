@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Texto Parafraseado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="results-container">
+        <h1>Resultado del Parafraseo</h1>
+        <p><strong>Texto Original:</strong></p>
+        <p>{{ original_text }}</p>
+        <hr>
+        <p><strong>Texto Parafraseado:</strong></p>
+        <p>{{ paraphrased_text }}</p>
+        <a href="/paraphraser-page">Volver a intentar</a>
+        <br>
+        <a href="/">Volver a la página principal</a>
+    </div>
+</body>
+</html>

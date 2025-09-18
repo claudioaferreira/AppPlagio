@@ -9,6 +9,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from docx import Document
 from ai_detector import predict_ai_content, evaluate_model, LABELS
+from paraphraser import paraphrase_text
 
 # --- Conexión a SQL Server ---
 server = 'TALLER04\\TALLER04' 
@@ -104,6 +105,25 @@ def find_plagiarism(document_content):
     
     # Devuelve solo los 5 resultados con mayor similitud
     return results[:5]
+
+
+
+# RUTA PARAFRASEADOR
+@app.route('/paraphraser-page')
+def paraphraser_page():
+    """Ruta para la página del parafraseador."""
+    return render_template('paraphraser.html')
+
+@app.route('/paraphrase', methods=['POST'])
+def paraphrase():
+    """Ruta para procesar el texto y parafrasearlo."""
+    original_text = request.form['original_text']
+    
+    # Llama a la función de tu nuevo script
+    paraphrased_text = paraphrase_text(original_text)
+    
+    return render_template('paraphrased_result.html', original_text=original_text, 
+                           paraphrased_text=paraphrased_text)
 
 
 
