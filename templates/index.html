@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detector de Plagio</title>
+    <title>Bienvenido | Detector de Plagio e IA</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Detector de Plagio</h1>
+        <h1>Bienvenido a la Suite de Herramientas de IA</h1>
+        <p>Selecciona una de las herramientas a continuación para empezar.</p>
         
         <div class="navigation-buttons">
-            <form action="/upload" method="post" enctype="multipart/form-data">
-                <label for="documento">Selecciona un documento para verificar el plagio:</label><br><br>
-                <input type="file" id="documento" name="documento" required><br><br>
-                <input type="submit" value="Analizar Plagio">
-            </form>
+            <a href="{{ url_for('plagio_bp.plagio_page') }}" class="button-link">Detector de Plagio</a>
+            <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="button-link">Detector de Contenido IA</a>
+            <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="button-link">Parafraseador de Texto</a>
         </div>
-
-        <a href="{{ url_for('ai_detector_page') }}" class="button-link">Ir al Detector de IA</a>
-        <a href="{{ url_for('paraphraser_page') }}" class="button-link">Ir al Parafraseador</a>
-
     </div>
 </body>
 </html>

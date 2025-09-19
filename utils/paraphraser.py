@@ -1,5 +1,4 @@
 
-
 from transformers import pipeline
 
 # Carga un modelo generativo pre-entrenado de Hugging Face

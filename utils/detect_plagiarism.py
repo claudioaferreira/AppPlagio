@@ -48,5 +48,5 @@ def find_plagiarism_with_sql_server(new_document_path):
     return results
 
 # Example usage
-plagiarism_results = find_plagiarism_with_sql_server('my_document.txt')
+# plagiarism_results = find_plagiarism_with_sql_server('my_document.txt')
 # ... print results
