@@ -20,8 +20,8 @@ Asegúrate de que tu máquina tenga instaladas las siguientes herramientas:
 ### 2. Configuración del Entorno de Python
 Clona el repositorio:
 ```bash
-git clone [URL_DEL_REPOSITORIO]
-cd [nombre-del-repositorio]
+git clone [[URL_DEL_REPOSITORIO](https://github.com/claudioaferreira/AppPlagio)]
+cd [AppPlagio]
 ```
 Crea y activa un entorno virtual:
 ```bash
