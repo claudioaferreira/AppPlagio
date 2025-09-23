@@ -7,16 +7,16 @@
 <body>
     <div class="container">
         <h1>Parafraseador de Texto</h1>
-        <p>Ingresa un texto para obtener una versión parafraseada por IA.</p>
+        <p>Ingresa un texto para obtener una versión parafraseada.</p>
         <form action="/paraphrase" method="post">
-            <textarea name="original_text" id="paraphrase-textarea" rows="10" cols="50" required placeholder="Escribe tu texto aquí..." maxlength="500"></textarea><br>
-            <span id="char-counter">0/500</span><br><br>
+            <textarea name="original_text" rows="8" required placeholder="Escribe tu texto aquí..."></textarea>
             <input type="submit" value="Parafrasear">
         </form>
         <a href="/">Volver</a>
     </div>
 
-    <script>
+
+        <script>
         // JavaScript para el contador de caracteres
         const textarea = document.getElementById('paraphrase-textarea');
         const counter = document.getElementById('char-counter');
@@ -29,3 +29,4 @@
     </script>
 </body>
 </html>
+
