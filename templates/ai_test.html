@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de IA con Gemini</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="ai-test-page"> 
+    <div class="container">
+        <div class="ai-chassis">
+            <div class="ai-screen">
+                <div class="screen-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <div class="screen-content">
+                    {% if ai_response %}
+                        <div>{{ ai_response }}</div>
+                    {% elif error %}
+                        <div class="error-message">{{ error }}</div>
+                    {% else %}
+                        <span class="placeholder">Esperando tu prompt matemático...</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="ai-input-area">
+                <form action="{{ url_for('AiTest_bp.ai_test_page') }}" method="post" class="ai-form">
+                    <textarea name="content" rows="3" required placeholder="Escribe tu problema o fórmula aquí...">{{ user_content or '' }}</textarea>
+                    <button type="submit" class="button">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <a href="/" style="position: absolute; top: 20px; left: 20px;">Volver</a>
+</body>
+</html>

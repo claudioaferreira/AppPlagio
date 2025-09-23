@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detector de Plagio</title>
+    <title>Detector de Plagio</title> 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Detector de Plagio</h1>
+        <p>Sube un documento para analizarlo.</p>
         
-        <div class="navigation-buttons">
-            <form action="{{ url_for('plagio_bp.upload_file') }}" method="post" enctype="multipart/form-data">
-                <label for="documento">Selecciona un documento para verificar el plagio:</label><br><br>
-                <input type="file" id="documento" name="documento" required><br><br>
-                <input type="submit" value="Analizar Plagio">
-            </form>
-        </div>
-
-      <a href="/">Volver</a>
-
+        <form action="{{ url_for('plagio_bp.upload_file') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="documento" required>
+            <input type="submit" value="Analizar">
+        </form>
+        <a href="/">Volver</a>
     </div>
 </body>
 </html>

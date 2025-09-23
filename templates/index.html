@@ -6,13 +6,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido a la Suite de Herramientas de IA</h1>
+        <h1>Suite de Herramientas de IA</h1>
         <p>Selecciona una de las herramientas a continuación para empezar.</p>
         
         <div class="navigation-buttons">
             <a href="{{ url_for('plagio_bp.plagio_page') }}" class="button-link">Detector de Plagio</a>
             <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="button-link">Detector de Contenido IA</a>
             <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="button-link">Parafraseador de Texto</a>
+            <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="button-link">Math Solve</a>
         </div>
     </div>
 </body>
