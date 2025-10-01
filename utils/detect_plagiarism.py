@@ -1,3 +1,7 @@
+# Detector de Plagio Semántico
+## usa embeddings (vectores numéricos generados por modelos como sentence-transformers). 
+## Estos vectores capturan el significado y el contexto.
+
 import pyodbc
 import numpy as np
 from sentence_transformers import SentenceTransformer
