@@ -6,6 +6,27 @@ import joblib
 import os
 import io
 
+## 1 Carga de datos (load_data)
+# Lee los archivos .jsonl de entrenamiento (train.jsonl) y validación (dev.jsonl), los transforma en un DataFrame con columnas text y label.
+
+## 2 Vectorización con TF-IDF (TfidfVectorizer)
+# Vectorización con TF-IDF (TfidfVectorizer) y clasificación con Regresión Logística
+# Convierte los textos en una matriz dispersa de frecuencias ponderadas de términos (clásico bag-of-words con TF-IDF)
+# Ejemplo: "El perro ladra" → [0.23, 0.0, 0.89, ...]
+
+## 3 Entrenamiento de un clasificador (LogisticRegression)
+# Usa regresión logística multiclase (max_iter=500) sobre los vectores TF-IDF para aprender a predecir la etiqueta.
+# Guarda el modelo entrenado (.pkl) y el vectorizador para reuso.
+
+## 4 Predicción (predict_ai_content)
+# Carga el modelo y el vectorizador.
+# Transforma un nuevo documento a TF-IDF.
+# El clasificador devuelve un número de clase → lo traduces a texto usando LABELS.
+
+## 5 Evaluación (evaluate_model)
+# Evalúa en el conjunto dev.jsonl y muestra métricas (classification_report).
+
+
 # Define las rutas de los archivos del dataset
 TRAIN_FILE = os.path.join('pan-25-ai-detection', 'train.jsonl')
 DEV_FILE = os.path.join('pan-25-ai-detection', 'dev.jsonl')
