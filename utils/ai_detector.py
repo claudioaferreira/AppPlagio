@@ -1,11 +1,3 @@
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
-import joblib
-import os
-import io
-
 ## 1 Carga de datos (load_data)
 # Lee los archivos .jsonl de entrenamiento (train.jsonl) y validación (dev.jsonl), los transforma en un DataFrame con columnas text y label.
 
@@ -26,6 +18,17 @@ import io
 ## 5 Evaluación (evaluate_model)
 # Evalúa en el conjunto dev.jsonl y muestra métricas (classification_report).
 
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+import joblib
+import os
+import io
+import json
+
+
+
 
 # Define las rutas de los archivos del dataset
 TRAIN_FILE = os.path.join('pan-25-ai-detection', 'train.jsonl')
@@ -34,12 +37,12 @@ MODEL_PATH = 'ai_classifier_model.pkl'
 VECTORIZER_PATH = 'tfidf_vectorizer.pkl'
 
 LABELS = [
-    "Fully human-written",
-    "Human-initiated, then machine-continued",
-    "Human-written, then machine-polished",
-    "Machine-written, then machine-humanized",
-    "Machine-written, then human-edited",
-    "Deeply-mixed text"
+    "Completamente escrito por humanos",
+    "Iniciado por humanos, continuado por máquina",
+    "Escrito por humanos, pulido por máquina",
+    "Escrito por máquina, luego humanizado por máquina",
+    "Escrito por máquina, luego editado por humanos",
+    "Texto profundamente mezclado"
 ]
 
 def load_data(file_path):
@@ -47,8 +50,11 @@ def load_data(file_path):
     data = []
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            data.append(eval(line.strip()))
+             data.append(json.loads(line.strip()))
     return pd.DataFrame(data)
+
+
+
 
 def train_and_save_model():
     """Entrena el modelo de clasificación y lo guarda en el disco."""
@@ -58,12 +64,23 @@ def train_and_save_model():
     train_df = load_data(TRAIN_FILE)
     
     # Vectoriza el texto usando TF-IDF
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(
+        ngram_range=(1, 2),  
+        max_features=200000, #Limita el vocabulario a 100,000 (ajustable)
+        min_df=5  #Ignora términos que aparecen en menos de 5 documentos (reduce ruido)
+    )
     X_train = vectorizer.fit_transform(train_df['text'])
     y_train = train_df['label']
+
+    print(f"INFO: Matriz de características creada con {X_train.shape[1]} columnas.")
     
     # Entrena el modelo de regresión logística
-    classifier = LogisticRegression(max_iter=500)
+    classifier = LogisticRegression(
+        max_iter=5000, 
+        class_weight='balanced', 
+        solver='saga', #Solucionador más eficiente para datos dispersos y grandes.
+        n_jobs=-1 #Utiliza todos los núcleos de CPU disponibles para paralelizar (acelerar)
+    )
     classifier.fit(X_train, y_train)
     
     # Guarda el vectorizador y el modelo para su uso futuro
@@ -92,8 +109,6 @@ def predict_ai_content(document_content):
     # La predicción te da un número, necesitas convertirlo en una etiqueta de texto
     prediction_number = prediction[0]
 
-
-
     # Verifica si el número está dentro del rango de etiquetas
     if 0 <= prediction_number < len(LABELS):
         # Devuelve la etiqueta de texto en lugar del número
@@ -118,12 +133,20 @@ def evaluate_model(labels_list):
     y_dev = dev_df['label']
     
     predictions = classifier.predict(X_dev)
-    report_string = classification_report(y_dev, predictions, target_names=labels_list)
+# 1. Obtiene el reporte como DICCIONARIO para extraer la precisión
+    report_dict = classification_report(y_dev, predictions, target_names=labels_list, output_dict=True)
     
+    # 2. Obtiene el reporte como STRING para mostrarlo en la plantilla
+    report_string = classification_report(y_dev, predictions, target_names=labels_list, output_dict=False)
+    
+    # Extrae la precisión total del modelo (accuracy)
+    accuracy_value = report_dict.get('accuracy', 0.0)
+
     print("\n--- Informe de Clasificación (Consola) ---")
     print(report_string)
     print("---------------------------------")
-    return report_string
+
+    return report_string, accuracy_value
 
 # Entrenar el modelo al iniciar el script por primera vez si no existe
 if __name__ == '__main__':

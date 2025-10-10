@@ -25,8 +25,9 @@ def get_ai_results():
         return render_template('ai_results.html', result="Formato de archivo no soportado.")
 
     prediction = predict_ai_content(document_content)
-    evaluation_report = evaluate_model(LABELS)
+    evaluation_report_string, accuracy_value = evaluate_model(LABELS) 
 
     return render_template('ai_results.html',
                            result=prediction,
-                           report=evaluation_report)
+                           report=evaluation_report_string,
+                           accuracy=accuracy_value)
