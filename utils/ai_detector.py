@@ -1,3 +1,4 @@
+#Clasificación de texto con Machine Learning#
 ## 1 Carga de datos (load_data)
 # Lee los archivos .jsonl de entrenamiento (train.jsonl) y validación (dev.jsonl), los transforma en un DataFrame con columnas text y label.
 
@@ -56,6 +57,7 @@ def load_data(file_path):
 
 
 
+
 def train_and_save_model():
     """Entrena el modelo de clasificación y lo guarda en el disco."""
     print("Iniciando el entrenamiento del modelo de detección de IA...")
@@ -88,6 +90,10 @@ def train_and_save_model():
     joblib.dump(vectorizer, VECTORIZER_PATH)
     
     print("Modelo y vectorizador guardados con éxito.")
+
+
+
+
 
 def predict_ai_content(document_content):
     """Carga el modelo guardado y predice la categoría del documento."""
