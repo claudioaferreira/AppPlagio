@@ -9,11 +9,35 @@
         <h1>Detector de Plagio</h1>
         <p>Sube un documento para analizarlo.</p>
         
-        <form action="{{ url_for('plagio_bp.upload_file') }}" method="post" enctype="multipart/form-data">
+        <form id="plagiarismForm" action="{{ url_for('plagio_bp.upload_file') }}" method="post" enctype="multipart/form-data">
             <input type="file" name="documento" required>
             <input type="submit" value="Analizar">
         </form>
         <a href="/">Volver</a>
     </div>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-message">
+            Procesando documento y buscando coincidencias. Por favor, espere...
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('plagiarismForm');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const fileInput = form.querySelector('input[type="file"]');
+
+            form.addEventListener('submit', function(event) {
+                // Solo muestra el loader si se ha seleccionado un archivo
+                if (fileInput.files.length > 0) {
+                    loadingOverlay.style.display = 'flex';
+                }
+                // El navegador continúa con el envío del formulario. 
+                // La pantalla de carga se oculta automáticamente cuando el servidor devuelve la página de resultados.
+            });
+        });
+    </script>
 </body>
 </html>
