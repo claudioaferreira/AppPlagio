@@ -7,15 +7,9 @@
 <body>
     <div class="results-container">
         <h1>Resultados del Análisis</h1>
-        <p class="methodology-info">
-            Este análisis fue realizado por un **Detector de Plagio Semántico**. 
-            El sistema utiliza modelos avanzados para entender el **significado** y el **contexto** del texto (embeddings). 
-            El **Porcentaje de Similitud** mide qué tan cerca está el significado de tu documento del contenido fuente, 
-            permitiendo identificar el plagio incluso por **paráfrasis**.
-        </p>
 
-        {% if average_similarity > 0 %}
-            <p class="highest-similarity">El porcentaje de similitud más alto encontrado es: <strong>{{ "%.2f"|format(average_similarity * 100) }}%</strong></p>
+        {% if highest_similarity > 0 %}
+            <p class="highest-similarity">El porcentaje de similitud más alto encontrado es: <strong>{{ "%.2f"|format(highest_similarity) }}%</strong></p>
             <br>
             <p>Principales coincidencias:</p>
             <ul>
@@ -23,7 +17,7 @@
                     <li>
                         Documento: <strong>{{ result.document_id }}</strong>
                         <br>
-                        Similitud: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
+                        Similitud: <strong>{{ "%.2f"|format(result.similarity_score) }}%</strong>
                     </li>
                 {% endfor %}
             </ul>

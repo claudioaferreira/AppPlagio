@@ -18,10 +18,27 @@
                     <span class="dot green"></span>
                 </div>
                 <div class="screen-content">
-                    {% if ai_response %}
-                        <div>{{ ai_response }}</div>
-                    {% elif error %}
+                    {% if error %}
                         <div class="error-message">{{ error }}</div>
+                    {% endif %}
+
+                    {% if ai_response %}
+                    <h2 class="section-title">1. Problema Identificado</h2>
+                    <p>{{ ai_response.problema_identificado }}</p>
+
+                    <h3 class="section-title">2. Principios Clave</h3>
+                    <ul class="key-principles">
+                        {% for principio in ai_response.principios_clave %}
+                        <li>{{ principio }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <h3 class="section-title">3. Desarrollo Detallado</h3>
+                    <div class="math-solution">{{ ai_response.desarrollo_latex | safe }}</div>
+
+                    <h3 class="section-title">4. Respuesta Final</h3>
+                    <div class="math-solution final-answer">{{ ai_response.respuesta_final | safe }}</div>
+                    
                     {% else %}
                         <span class="placeholder">Esperando tu prompt matemático...</span>
                     {% endif %}

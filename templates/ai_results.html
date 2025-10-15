@@ -1,63 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
- <title>Resultados de Detección AI</title>
- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Resultados de Detección AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
- <div class="results-container">
-  <h1>Resultado del Análisis de Contenido AI</h1>
-  
-      <p>El sistema ha clasificado el documento analizado en la siguiente categoría:</p>
-  <div class="ai-result-box">
-   <p><strong>{{ result }}</strong></p>
-  </div>
-  <br>
+    <div class="results-container">
+        <h1>Resultado del Análisis</h1>
+        <p>La categoría del documento es:</p>
+        <div class="ai-result-box">
+            <p><strong>{{ result }}</strong></p>
+        </div>
+        <br>
 
-  <h2>Rendimiento Histórico del Modelo</h2>
-    <p>
-            Este informe no evalúa el documento actual, sino que muestra qué tan bien el modelo de clasificación 
-            (basado en TF-IDF y Regresión Logística) rindió históricamente al clasificar miles de textos de prueba.
-        </p>
-        
-        <p>
-            La **Precisión General (Accuracy)** del modelo en el conjunto de datos de prueba es de 
-            <strong>{{ "%.2f"|format(accuracy * 100) }}%</strong>. Este es el porcentaje de veces que el modelo acertó la categoría de los textos de prueba.
-        </p>
+        <h2>Rendimiento General del Modelo</h2>
+        <pre>{{ report }}</pre>
 
-    <h3>Reporte de Clasificación por Categoría</h3>
-    <pre>{{ report }}</pre>
-
-    <br>
-    
-    <h3>Guía para Entender las Métricas Clave:</h3>
-    
-    <p>Las métricas en el reporte (Precisión, Exhaustividad y F1-Score) se miden en una escala de 0.00 a 1.00, donde <strong>1.00 indica un rendimiento perfecto</strong>.</p>
-    
-    <ul>
-      <li>
-        <strong>Precisión (Precision):</strong> Responde a la pregunta: "De todos los textos que el modelo *predijo* como esta categoría, ¿cuántos fueron realmente correctos?". Un número alto (cercano a 1.00) significa que el modelo es **confiable** cuando hace esta predicción.
-      </li>
-      <li>
-        <strong>Exhaustividad (Recall):</strong> Responde a la pregunta: "De todos los textos que *realmente* pertenecen a esta categoría, ¿cuántos logró identificar el modelo?". Un número alto significa que el modelo es **sensible** y no se pierde muchos ejemplos reales.
-      </li>
-      <li>
-        <strong>F1-Score:</strong> Es un promedio ponderado que combina Precisión y Exhaustividad en un solo número. Es la mejor métrica para evaluar el **balance general** del modelo para una categoría específica.
-      </li>
-      <li>
-        <strong>Support (Soporte):</strong> Muestra la **cantidad total de ejemplos de prueba** que existen en esa categoría. Esto explica por qué el rendimiento de algunas categorías pequeñas puede ser más volátil.
-      </li>
-    </ul>
-    
-    <!-- <h3>Análisis Rápido de Debilidades del Modelo:</h3>
-    <p>
-            Basado en los resultados de prueba, las categorías "Escrito por máquina, luego editado por humanos" y "Texto profundamente mezclado" muestran valores de F1-Score muy bajos. 
-            Esto indica que el modelo actual tiene **dificultad para distinguir de manera confiable** estos textos sutilmente modificados, especialmente cuando la intervención humana o la mezcla es compleja.
-    </p>
-         -->
-  <a href="/ai-detector-page">Volver a intentar</a>
-  <br>
-  <a href="/">Volver a la página principal</a>
- </div>
+        <a href="/ai-detector-page">Volver a intentar</a>
+        <br>
+        <a href="/">Volver a la página principal</a>
+    </div>
 </body>
 </html>
