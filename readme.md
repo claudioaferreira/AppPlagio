@@ -57,7 +57,7 @@ CREATE TABLE DocumentEmbeddings (
 ---
 
 ### 5. Descarga y Configuración de los Datasets
-Tu proyecto utiliza dos datasets principales. Debes descargarlos y colocarlos en carpetas específicas en la raíz de tu proyecto.
+El proyecto utiliza dos datasets principales. Debes descargarlos y colocarlos en carpetas específicas en la raíz de tu proyecto.
 
 - Detección de Plagio Extrínseco (Corpus PAN 2011):
 Descarga el corpus ([aqui](https://www.google.com/search?q=https://pan.webis.de/clef11/pan11-web/plagiarism-detection.html)).
