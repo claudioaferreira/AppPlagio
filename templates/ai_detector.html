@@ -8,35 +8,12 @@
     <div class="container">
         <h1>Detector de Contenido AI</h1>
         <p>Analiza tu documento para determinar si fue escrito por un humano o una IA.</p>
-        <form id="aiForm" action="/ai-detect" method="post" enctype="multipart/form-data">
+        <form action="/ai-detect" method="post" enctype="multipart/form-data">
             <label for="documento">Selecciona un documento para analizar:</label><br><br>
             <input type="file" id="documento" name="documento" required><br><br>
             <input type="submit" value="Analizar Texto">
         </form>
         <a href="/">Volver a la página principal</a>
     </div>
-        <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div class="loading-message">
-            Procesando documento. Por favor, espere...
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('aiForm');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const fileInput = form.querySelector('input[type="file"]');
-
-            form.addEventListener('submit', function(event) {
-                // Solo muestra el loader si se ha seleccionado un archivo
-                if (fileInput.files.length > 0) {
-                    loadingOverlay.style.display = 'flex';
-                }
-                // El navegador continúa con el envío del formulario. 
-                // La pantalla de carga se oculta automáticamente cuando el servidor devuelve la página de resultados.
-            });
-        });
-    </script>
 </body>
 </html>
