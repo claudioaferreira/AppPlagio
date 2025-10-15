@@ -6,9 +6,9 @@ import pyodbc
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from database.connection import CNXN_STR 
 
-# --- SQL Server Connection (same as before) ---
-cnxn_str = '...' # Your connection string
+
 
 # --- Load the embedding model ---
 model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
@@ -20,7 +20,7 @@ def find_plagiarism_with_sql_server(new_document_path):
     new_embedding = model.encode(new_document_content)
 
     # Connect to the database and get all embeddings
-    with pyodbc.connect(cnxn_str) as cnxn:
+    with pyodbc.connect(CNXN_STR) as cnxn:
         cursor = cnxn.cursor()
         cursor.execute("SELECT DocumentID, Embedding FROM DocumentEmbeddings")
         
