@@ -1,31 +1,169 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Resultados de Plagio</title>
+    <title>Informe de Análisis de Similitud Semántica</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    </head>
+
 <body>
     <div class="results-container">
-        <h1>Resultados del Análisis</h1>
+        <h1>Informe de Análisis de Similitud Semántica</h1>
+        <p class="methodology-info">
+            Evaluación comparativa de la originalidad mediante embeddings contextuales (paráfrasis y detección translingüe).
+        </p>
+        
+        <div class="comparison-grid">
 
-        {% if highest_similarity > 0 %}
-            <p class="highest-similarity">El porcentaje de similitud más alto encontrado es: <strong>{{ "%.2f"|format(highest_similarity) }}%</strong></p>
-            <br>
-            <p>Principales coincidencias:</p>
-            <ul>
-                {% for result in results %}
+            <div class="model-results">
+                <h2>Modelo 1: MPNet (Documento Completo)</h2>
+                <p class="model-description">Enfoque: Búsqueda tradicional. Compara el vector del documento completo contra la base de datos.</p>
+
+                {% set M1_SCORE = model1_results.max_similarity %}
+                {% set M1_RISK = model1_results.risk_level %}
+                {% set M1_COLOR = model1_results.risk_color %}
+                {% set score_percent = "%.0f"|format(M1_SCORE * 100) %}
+                {% set M1_MATCH_COUNT = model1_results.match_count %}
+
+                <div class="gauge-section">
+                    <h3>Puntaje Máximo de Similitud</h3>
+                    <div class="circular-progress"
+                        style="--gauge-percent: {{ score_percent }}%; --gauge-color: var(--{{ M1_COLOR }}-color);">
+                        <span class="progress-value">{{ score_percent }}%</span>
+                    </div>
+                    <p class="risk-verdict {{ M1_COLOR }}">
+                        ALERTA GLOBAL: <strong>{{ M1_RISK }}</strong>
+                    </p>
+                </div>
+
+                <hr>
+
+                {% if M1_MATCH_COUNT > 0 %}
+                <p class="highest-similarity">Documentos con coincidencia alta: <strong>{{ M1_MATCH_COUNT }}</strong>.</p>
+                <p>Similitud global más alta: <strong>{{ score_percent }}%</strong></p>
+                <p>Top 5 de Coincidencias:</p>
+                <ul>
+                    {# Bucle robusto para Top 5 #}
+                    {% for result in model1_results.detailed_results | default([]) | slice(5) %}
+                        {% if result is mapping %}
                     <li>
-                        Documento: <strong>{{ result.document_id }}</strong>
+                        Fuente ID: <strong>{{ result.document_id }}</strong>
                         <br>
-                        Similitud: <strong>{{ "%.2f"|format(result.similarity_score) }}%</strong>
+                        Similitud: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
                     </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="no-plagiarism">No se encontraron coincidencias de plagio significativas. 🎉</p>
-        {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if M1_MATCH_COUNT > 5 %}
+                    <p class="list-summary">...y {{ M1_MATCH_COUNT - 5 }} documentos adicionales.</p>
+                {% endif %}
+                {% else %}
+                <p class="no-plagiarism">No se encontraron documentos con similitud significativa.</p>
+                {% endif %}
+            </div>
+            <div class="model-results granular-model">
+                <h2>Modelo 2: MPNet (Fragmentado)</h2>
+                <p class="model-description">Enfoque: **Granular**. Evalúa la similitud a nivel de **frase** (Detección de Paráfrasis).</p>
+
+                {% set M2_SCORE = model2_results.max_similarity %}
+                {% set M2_RISK = model2_results.risk_level %}
+                {% set M2_COLOR = model2_results.risk_color %}
+                {% set score_percent_m2 = "%.0f"|format(M2_SCORE * 100) %}
+                {% set M2_MATCH_COUNT = model2_results.match_count %}
+
+                <div class="gauge-section">
+                    <h3>Puntaje Máximo de Fragmento</h3>
+                    <div class="circular-progress"
+                        style="--gauge-percent: {{ score_percent_m2 }}%; --gauge-color: var(--{{ M2_COLOR }}-color);">
+                        <span class="progress-value">{{ score_percent_m2 }}%</span>
+                    </div>
+                    <p class="risk-verdict {{ M2_COLOR }}">
+                        ALERTA DE FRAGMENTO: <strong>{{ M2_RISK }}</strong>
+                    </p>
+                </div>
+
+                <hr>
+
+                {% if M2_MATCH_COUNT > 0 %}
+                <p class="highest-similarity">Documentos con fragmentos similares: <strong>{{ M2_MATCH_COUNT }}</strong>.</p>
+                <p>Similitud máxima de fragmento: <strong>{{ score_percent_m2 }}%</strong></p>
+                <p>Top 3 Coincidencias y Fragmento Máximo:</p>
+                <ul>
+                    {# Bucle robusto para Top 3 #}
+                    {% for result in model2_results.detailed_results | default([]) | slice(3) %}
+                        {% if result is mapping %}
+                    <li>
+                        Fuente ID: <strong>{{ result.document_id }}</strong>
+                        <br>
+                        Similitud Máxima: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
+                        {% if result.matched_sentence %}
+                        <p class="matched-text">Fragmento: <em>{{ result.matched_sentence | truncate(80, true) }}...</em></p>
+                        {% endif %}
+                    </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if M2_MATCH_COUNT > 3 %}
+                    <p class="list-summary">...y {{ M2_MATCH_COUNT - 3 }} documentos adicionales identificados.</p>
+                {% endif %}
+                {% else %}
+                <p class="no-plagiarism">No se encontraron fragmentos con similitud significativa.</p>
+                {% endif %}
+            </div>
+            <div class="model-results roberta-model">
+                <h2>Modelo 3: XLM-RoBERTa (Alto Rigor)</h2>
+                <p class="model-description">Enfoque: **Alta Precisión**. Ideal para Detección Translingüe y Sentencia a Sentencia.</p>
+
+                {% set M3_SCORE = model3_results.max_similarity %}
+                {% set M3_RISK = model3_results.risk_level %}
+                {% set M3_COLOR = model3_results.risk_color %}
+                {% set score_percent_m3 = "%.0f"|format(M3_SCORE * 100) %}
+                {% set M3_MATCH_COUNT = model3_results.match_count %}
+
+                <div class="gauge-section">
+                    <h3>Puntaje Máximo de Fragmento</h3>
+                    <div class="circular-progress"
+                        style="--gauge-percent: {{ score_percent_m3 }}%; --gauge-color: var(--{{ M3_COLOR }}-color);">
+                        <span class="progress-value">{{ score_percent_m3 }}%</span>
+                    </div>
+                    <p class="risk-verdict {{ M3_COLOR }}">
+                        ALERTA DE FRAGMENTO: <strong>{{ M3_RISK }}</strong>
+                    </p>
+                </div>
+
+                <hr>
+
+                {% if M3_MATCH_COUNT > 0 %}
+                <p class="highest-similarity">Documentos con fragmentos similares: <strong>{{ M3_MATCH_COUNT }}</strong>.</p>
+                <p>Similitud máxima de fragmento: <strong>{{ score_percent_m3 }}%</strong></p>
+                <p>Top 3 Coincidencias y Fragmento Máximo:</p>
+                <ul>
+                    {# Bucle robusto para Top 3 #}
+                    {% for result in model3_results.detailed_results | default([]) | slice(3) %}
+                        {% if result is mapping %}
+                    <li>
+                        Fuente ID: <strong>{{ result.document_id }}</strong>
+                        <br>
+                        Similitud Máxima: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
+                        {% if result.matched_sentence %}
+                        <p class="matched-text">Fragmento: <em>{{ result.matched_sentence | truncate(80, true) }}...</em></p>
+                        {% endif %}
+                    </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if M3_MATCH_COUNT > 3 %}
+                    <p class="list-summary">...y {{ M3_MATCH_COUNT - 3 }} documentos adicionales identificados.</p>
+                {% endif %}
+                {% else %}
+                <p class="no-plagiarism">No se encontraron fragmentos con similitud significativa.</p>
+                {% endif %}
+            </div>
+            </div>
+        
         <br>
-        <a href="/">Volver</a>
+        <a href="/">Volver al Inicio</a>
     </div>
 </body>
+
 </html>

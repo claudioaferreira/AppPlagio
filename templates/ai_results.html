@@ -1,24 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Resultados de Detección AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ <title>Resultados de Detección AI</title>
+ <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="results-container">
-        <h1>Resultado del Análisis</h1>
-        <p>La categoría del documento es:</p>
-        <div class="ai-result-box">
-            <p><strong>{{ result }}</strong></p>
-        </div>
-        <br>
-
-        <h2>Rendimiento General del Modelo</h2>
-        <pre>{{ report }}</pre>
-
-        <a href="/ai-detector-page">Volver a intentar</a>
-        <br>
-        <a href="/">Volver a la página principal</a>
+ <div class="results-container">
+  <h1>Resultado del Análisis de Contenido AI</h1>
+  
+  
+  <div class="model-section">
+    <h2>Modelo 1: Regresión Logística (Base)</h2>
+    <p>El sistema LR ha clasificado el documento en la siguiente categoría:</p>
+    <div class="ai-result-box">
+        <p><strong>{{ result_lr }}</strong></p>
     </div>
+    
+    <h3>Rendimiento Histórico del Modelo (LR)</h3>
+    <p>La **Precisión General (Accuracy)** del modelo LR en el conjunto de datos de prueba es de 
+       <strong>{{ "%.2f"|format(accuracy_lr * 100) }}%</strong>.
+    </p>
+
+    <h3>Reporte de Clasificación por Categoría (LR)</h3>
+    <pre>{{ report_lr }}</pre>
+  </div>
+
+  <hr> 
+  
+  <div class="model-section">
+    <h2>Modelo 2: LightGBM (Optimizado)</h2>
+    <p>El sistema LGBM ha clasificado el documento en la siguiente categoría:</p>
+    <div class="ai-result-box" style="background-color: #e6ffe6; border-left: 5px solid #4CAF50;">
+        <p><strong>{{ result_lgbm }}</strong></p>
+    </div>
+    
+    <h3>Rendimiento Histórico del Modelo (LGBM)</h3>
+    <p>La **Precisión General (Accuracy)** del modelo LGBM en el conjunto de datos de prueba es de 
+       <strong>{{ "%.2f"|format(accuracy_lgbm * 100) }}%</strong>.
+    </p>
+
+    <h3>Reporte de Clasificación por Categoría (LGBM)</h3>
+    <pre>{{ report_lgbm }}</pre>
+  </div>
+
+  <hr>
+
+   <div class="model-section">
+    <h2>Modelo 3: LightGBM + Feature Engineering (Optimizado)</h2>
+    <p>El sistema LGBM ha clasificado el documento en la siguiente categoría:</p>
+    <div class="ai-result-box" style="background-color: #e6ffe6; border-left: 5px solid #4CAF50;">
+        <p><strong>{{ result_lgbm_fe }}</strong></p>
+    </div>
+    
+    <h3>Rendimiento Histórico del Modelo (LGBM)</h3>
+    <p>La **Precisión General (Accuracy)** del modelo LGBM en el conjunto de datos de prueba es de
+       <strong>{{ "%.2f"|format(accuracy_lgbm_fe * 100) }}%</strong>.
+    </p>
+
+    <h3>Reporte de Clasificación por Categoría (LGBM)</h3>
+    <pre>{{ report_lgbm_fe }}</pre>
+  </div>
+  <br>
+
+  <h2>Guía para Entender las Métricas Clave:</h2>
+  <ul>
+      <li>
+        <strong>Precisión (Precision):</strong> Responde a la pregunta: "De todos los textos que el modelo *predijo* como esta categoría, ¿cuántos fueron realmente correctos?". Un número alto (cercano a 1.00) significa que el modelo es **confiable** cuando hace esta predicción.
+      </li>
+      <li>
+        <strong>Exhaustividad (Recall):</strong> Responde a la pregunta: "De todos los textos que *realmente* pertenecen a esta categoría, ¿cuántos logró identificar el modelo?". Un número alto significa que el modelo es **sensible** y no se pierde muchos ejemplos reales.
+      </li>
+      <li>
+        <strong>F1-Score:</strong> Es un promedio ponderado que combina Precisión y Exhaustividad en un solo número. Es la mejor métrica para evaluar el **balance general** del modelo para una categoría específica.
+      </li>
+      <li>
+        <strong>Support (Soporte):</strong> Muestra la **cantidad total de ejemplos de prueba** que existen en esa categoría. Esto explica por qué el rendimiento de algunas categorías pequeñas puede ser más volátil.
+      </li>
+    </ul>
+
+  <a href="/ai-detector-page">Volver a intentar</a>
+  <br>
+  <a href="/">Volver a la página principal</a>
+ </div>
 </body>
 </html>

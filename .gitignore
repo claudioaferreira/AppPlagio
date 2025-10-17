@@ -1,3 +1,11 @@
 pan-25-ai-detection/*.jsonl
 /pan-plagiarism-corpus-2011/
+/pan25-generated-plagiarism-detection-train
+/pan-plagiarism-corpus-2011
+/wikipediaDump
+corpus_wikipedia_es
 .env
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+

@@ -11,13 +11,15 @@ model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
 corpus_path = os.path.join(os.getcwd(), 'pan-plagiarism-corpus-2011', 'external-detection-corpus', 'source-document')
 # Ruta a la carpeta del corpus 2025
 corpus_path_2025 = os.path.join(os.getcwd(), 'pan-plagiarism-corpus-2025', 'external-detection-corpus', 'source-document')
+corpus_path_new_pan25_src = os.path.join(os.getcwd(), 'pan25-generated-plagiarism-detection-train', '01_train', '01_train', 'src')
+
 
 # --- CONFIGURACIÓN DE LA BASE DE DATOS SQL SERVER ---
 # Reemplaza estos valores con la información de tu servidor
 server = 'TALLER04\\TALLER04' 
 database = 'plagioEmb' 
-username = 'usuario' 
-password = 'contraseña' 
+username = 'sa' 
+password = 'HTObRrKy' 
 driver = '{ODBC Driver 17 for SQL Server}' # Asegúrate de que este es el driver correcto
 
 # Cadena de conexión
@@ -32,7 +34,7 @@ try:
     print("Conexión exitosa. Recorriendo documentos...")
     
     # Recorre los documentos del corpus
-    for root, dirs, files in os.walk(corpus_path + ';' + corpus_path_2025):
+    for root, dirs, files in os.walk(corpus_path_new_pan25_src):
         for file in files:
             if file.endswith('.txt'):
                 file_path = os.path.join(root, file)

@@ -55,7 +55,7 @@ a:hover {
 /* --- Contenedor Principal Unificado --- */
 .container, .results-container {
     width: 100%;
-    max-width: 700px;
+    max-width: 800px;
     background-color: var(--card-background);
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
@@ -201,4 +201,200 @@ li {
     flex-grow: 1;
     resize: none;
     margin-bottom: 0; /* Quitamos el margen inferior en este caso */
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente */
+    z-index: 9999; /* Asegura que esté en la capa superior */
+    display: none; /* Inicialmente oculto */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo del spinner (loader circular) */
+.spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite; /* Animación */
+    margin-bottom: 20px;
+}
+
+/* Animación de giro */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilo del mensaje de carga */
+.loading-message {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+/* Estilos para el veredicto de riesgo y el gauge circular */
+:root {
+    --risk-muy-alto-color: #c0392b; /* Rojo oscuro */
+    --risk-alto-color: #e67e22;     /* Naranja */
+    --risk-moderado-color: #f1c40f; /* Amarillo */
+    --risk-bajo-color: #27ae60;     /* Verde */
+    --risk-insignificante-color: #bdc3c7; /* Gris claro/default */
+}
+
+
+  .risk-verdict {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            transition: background-color 0.5s;
+        }
+
+        /* --- Estilo del Gauge Circular --- */
+       :root {
+    --risk-muy-alto-color: #c0392b; /* Rojo oscuro */
+    --risk-alto-color: #e67e22;     /* Naranja */
+    --risk-moderado-color: #f1c40f; /* Amarillo */
+    --risk-bajo-color: #27ae60;     /* Verde */
+    --risk-insignificante-color: #bdc3c7; /* Gris claro/default */
+}
+
+/* --- 2. Estilos del Gauge Circular --- */
+.gauge-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    position: relative;
+}
+
+.circular-progress {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* La magia: Conic-gradient usa las variables --gauge-color y --gauge-percent */
+    background: conic-gradient(
+        var(--gauge-color) 0%, 
+        var(--gauge-color) var(--gauge-percent), 
+        #e0e0e0 var(--gauge-percent), 
+        #e0e0e0 100%
+    );
+}
+
+.circular-progress::before {
+    content: "";
+    width: 180px; /* Tamaño del agujero central */
+    height: 180px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+}
+
+.progress-value {
+    position: absolute;
+    z-index: 2;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--gauge-color);
+}
+
+/* --- 3. Clases de Riesgo para la barra inferior --- */
+/* Estas clases establecen el background-color de la barra 'risk-verdict' */
+.risk-muy-alto {
+    background-color: var(--risk-muy-alto-color) !important;
+}
+
+.risk-alto {
+    background-color: var(--risk-alto-color) !important;
+}
+
+.risk-moderado {
+    background-color: var(--risk-moderado-color) !important;
+}
+
+.risk-bajo {
+    background-color: var(--risk-bajo-color) !important;
+}
+
+.risk-insignificante {
+    background-color: var(--risk-insignificante-color) !important;
+}
+
+/* Estilo base de la barra de veredicto */
+.risk-verdict {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    transition: background-color 0.5s;
+}
+
+.comparison-grid {
+    /* Establece un grid de 3 columnas de igual ancho */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.model-results {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilos para diferenciar */
+.granular-model {
+    border-color: #007bff; /* Azul */
+    background-color: #f7faff;
+}
+
+.roberta-model {
+    border-color: #28a745; /* Verde (Alto Rigor) */
+    background-color: #f0fff4;
+}
+
+.model-description {
+    font-size: 0.9em;
+    color: #666;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.matched-text {
+    font-style: italic;
+    color: #444; /* Color más neutral */
+    font-size: 0.85em;
+    margin-top: 5px;
+    padding-left: 10px;
+    border-left: 3px solid #007bff;
+    word-break: break-word; /* Mejora el manejo de texto largo */
+}
+
+.list-summary {
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 10px;
 }
