@@ -1,11 +1,12 @@
 # app.py
 import os
 import sys
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for, session
 from routes.routesMath_solve import AiTest_bp
 from routes.routesPlagio import plagio_bp
 from routes.routesAi_detector import ai_detector_bp
 from routes.routesParaphraser import paraphraser_bp
+from routes.routesAuth import auth_bp
 from sklearn.base import BaseEstimator, TransformerMixin 
 from scipy.sparse import hstack 
 import numpy as np 
@@ -31,6 +32,8 @@ if project_root not in sys.path:
 
 app = Flask(__name__)
 
+app.secret_key = 'hola_mundo_secreto'
+
 
 
 # Opcional: Si quieres tener un manejador de archivos compartido
@@ -40,7 +43,13 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+@app.route('/')
+def home():
+    """Muestra la página principal (landing page)."""
+    return render_template('index.html')
+
 # Registrar los Blueprints
+app.register_blueprint(auth_bp)
 app.register_blueprint(plagio_bp)
 app.register_blueprint(ai_detector_bp)
 app.register_blueprint(paraphraser_bp)

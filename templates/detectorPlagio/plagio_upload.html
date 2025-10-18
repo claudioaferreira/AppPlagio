@@ -30,7 +30,7 @@
 
     <nav class="bg-white shadow-md py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+            <a href="{{ url_for('home') }}" class="flex items-center">
                 <div class="bg-primary p-2 rounded-lg mr-3">
                     <i class="fas fa-robot text-white text-2xl"></i>
                 </div>
@@ -50,10 +50,16 @@
                       <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
                       Math Solve
                   </a>
+                {% if 'user_id' in session %}
+                    <a href="{{ url_for('auth_bp.logout') }}" class="bg-transparent hover:bg-gray-100 text-dark font-medium py-2 px-6 rounded-lg transition duration-300">
+                        Hola, {{ session.username }} (Cerrar Sesión)
+                    </a>
 
-                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Iniciar Sesión
-                  </a>
+                {% else %}
+                    <a href="{{ url_for('auth_bp.login') }}" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                        Iniciar Sesión
+                    </a>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -89,7 +95,7 @@
             </div>
             
             <div class="text-center mt-8">
-                 <a href="{{ url_for('plagio_bp.welcome') }}" class="text-gray-600 hover:text-primary transition">
+                 <a href="{{ url_for('home') }}" class="text-gray-600 hover:text-primary transition">
                     <i class="fas fa-arrow-left mr-2"></i> Volver a la página principal
                 </a>
             </div>

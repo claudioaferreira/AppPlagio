@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - DECOPY AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+    <div class="max-w-md w-full bg-white p-8 md:p-12 rounded-xl shadow-lg">
+        
+        <div class="text-center mb-8">
+            <div class="flex justify-center items-center mb-4">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <span class="text-2xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </div>
+            <h1 class="text-2xl font-bold text-dark">Acceso a la Plataforma</h1>
+            <p class="text-gray-600">Por favor, inicia sesión para continuar.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="p-4 mb-4 text-sm rounded-lg 
+                            {% if category == 'danger' %} bg-red-100 text-red-700 
+                            {% elif category == 'success' %} bg-green-100 text-green-700
+                            {% else %} bg-blue-100 text-blue-700 {% endif %}"
+                     role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('auth_bp.login') }}" method="POST" class="space-y-6">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Usuario</label>
+                <input type="text" id="username" name="username" required
+                       class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+            </div>
+            
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                <input type="password" id="password" name="password" required
+                       class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+            </div>
+
+            <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-lg transition duration-300 text-lg">
+                <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
+            </button>
+        </form>
+        
+        <div class="text-center mt-6">
+            <a href="{{ url_for('home') }}" class="text-sm text-gray-600 hover:text-primary transition">
+                <i class="fas fa-arrow-left mr-1"></i> Volver al inicio
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

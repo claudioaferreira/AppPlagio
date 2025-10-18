@@ -30,7 +30,7 @@
 
     <nav class="bg-white shadow-md py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+            <a href="{{ url_for('home') }}" class="flex items-center">
                 <div class="bg-primary p-2 rounded-lg mr-3">
                     <i class="fas fa-robot text-white text-2xl"></i>
                 </div>
@@ -51,9 +51,16 @@
                       Math Solve
                   </a>
 
-                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Iniciar Sesión
-                  </a>
+                {% if 'user_id' in session %}
+                    <a href="{{ url_for('auth_bp.logout') }}" class="bg-transparent hover:bg-gray-100 text-dark font-medium py-2 px-6 rounded-lg transition duration-300">
+                        Hola, {{ session.username }} (Cerrar Sesión)
+                    </a>
+
+                {% else %}
+                    <a href="{{ url_for('auth_bp.login') }}" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                        Iniciar Sesión
+                    </a>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -194,7 +201,7 @@
                 <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-primary hover:bg-secondary text-white font-medium py-3 px-8 rounded-lg transition duration-300">
                     <i class="fas fa-redo mr-2"></i> Analizar Otro Documento
                 </a>
-                <a href="{{ url_for('plagio_bp.welcome') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-3 px-8 rounded-lg transition duration-300">
+                <a href="{{ url_for('home') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-3 px-8 rounded-lg transition duration-300">
                     Volver al Inicio
                 </a>
             </div>
