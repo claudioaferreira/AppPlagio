@@ -3,55 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba de IA con Gemini</title>
+    <title>Math Solve con Gemini - DECOPY AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    },
+                    fontFamily: {
+                        'mono': ['Fira Code', 'monospace'] // Añadimos Fira Code para la terminal
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="ai-test-page"> 
-    <div class="container">
-        <div class="ai-chassis">
-            <div class="ai-screen">
-                <div class="screen-header">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
+<body class="bg-gray-50">
+
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
                 </div>
-                <div class="screen-content">
-                    {% if error %}
-                        <div class="error-message">{{ error }}</div>
-                    {% endif %}
+                <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </a>
+            <div class="flex items-center gap-4"> 
+               <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de IA
+                  </a>
+                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de Plagio
+                  </a>
+                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Parafraseado
+                  </a>
+                   </a>
+                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Math Solve
+                  </a>
 
-                    {% if ai_response %}
-                    <h2 class="section-title">1. Problema Identificado</h2>
-                    <p>{{ ai_response.problema_identificado }}</p>
-
-                    <h3 class="section-title">2. Principios Clave</h3>
-                    <ul class="key-principles">
-                        {% for principio in ai_response.principios_clave %}
-                        <li>{{ principio }}</li>
-                        {% endfor %}
-                    </ul>
-
-                    <h3 class="section-title">3. Desarrollo Detallado</h3>
-                    <div class="math-solution">{{ ai_response.desarrollo_latex | safe }}</div>
-
-                    <h3 class="section-title">4. Respuesta Final</h3>
-                    <div class="math-solution final-answer">{{ ai_response.respuesta_final | safe }}</div>
-                    
-                    {% else %}
-                        <span class="placeholder">Esperando tu prompt matemático...</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="ai-input-area">
-                <form action="{{ url_for('AiTest_bp.ai_test_page') }}" method="post" class="ai-form">
-                    <textarea name="content" rows="3" required placeholder="Escribe tu problema o fórmula aquí...">{{ user_content or '' }}</textarea>
-                    <button type="submit" class="button">Enviar</button>
-                </form>
+                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Iniciar Sesión
+                  </a>
             </div>
         </div>
-    </div>
-    <a href="/" style="position: absolute; top: 20px; left: 20px;">Volver</a>
+    </nav>
+
+    <section class="py-20 md:py-24">
+        <div class="container mx-auto px-4">
+            
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-3xl md:text-4xl font-bold text-dark mb-4">Gemini Math Solve</h1>
+                <p class="text-lg text-gray-600 mb-10">
+                    Introduce un problema matemático. Nuestra IA, potenciada por Gemini, te dará la solución paso a paso.
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
+                
+                <div class="bg-dark">
+                    <div class="flex items-center p-3 bg-gray-700 border-b border-gray-600">
+                        <span class="h-3 w-3 rounded-full mr-2 bg-red-500"></span>
+                        <span class="h-3 w-3 rounded-full mr-2 bg-yellow-400"></span>
+                        <span class="h-3 w-3 rounded-full mr-2 bg-green-500"></span>
+                        <span class="text-sm text-gray-400 font-mono ml-auto">Gemini Shell (Math)</span>
+                    </div>
+                    
+                    <div class="screen-content p-6 h-96 overflow-y-auto">
+                        {% if error %}
+                            <div class="error-message"><strong>Error:</strong> {{ error }}</div>
+                        {% endif %}
+
+                        {% if ai_response %}
+                            <h2 class="section-title">1. Problema Identificado</h2>
+                            <p>{{ ai_response.problema_identificado }}</p>
+
+                            <h3 class="section-title">2. Principios Clave</h3>
+                            <ul class="key-principles">
+                                {% for principio in ai_response.principios_clave %}
+                                <li>{{ principio }}</li>
+                                {% endfor %}
+                            </ul>
+
+                            <h3 class="section-title">3. Desarrollo Detallado</h3>
+                            <div class="math-solution">{{ ai_response.desarrollo_latex | safe }}</div>
+
+                            <h3 class="section-title">4. Respuesta Final</h3>
+                            <div class="math-solution final-answer">{{ ai_response.respuesta_final | safe }}</div>
+                        
+                        {% else %}
+                            <span class="placeholder">Esperando tu prompt matemático...</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="bg-light p-4 border-t border-gray-200">
+                    <form action="{{ url_for('AiTest_bp.ai_test_page') }}" method="post" class="flex gap-4">
+                        <textarea name="content" rows="2" required 
+                                  placeholder="Escribe tu problema o fórmula aquí..."
+                                  class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary font-mono text-sm transition">{{ user_content or '' }}</textarea>
+                        <button type="submit" class="bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            <i class="fas fa-paper-plane mr-2"></i> Enviar
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                 <a href="{{ url_for('plagio_bp.welcome') }}" class="text-gray-600 hover:text-primary transition">
+                    <i class="fas fa-arrow-left mr-2"></i> Volver a la página principal
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-12 mt-20"> 
+        <div class="container mx-auto px-4">
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p class="text-gray-400">&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

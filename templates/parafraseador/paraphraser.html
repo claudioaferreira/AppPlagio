@@ -1,32 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Parafraseador de Texto</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parafraseador de Texto - DECOPY AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="container">
-        <h1>Parafraseador de Texto</h1>
-        <p>Ingresa un texto para obtener una versión parafraseada.</p>
-        <form action="/paraphrase" method="post">
-            <textarea name="original_text" rows="8" required placeholder="Escribe tu texto aquí..."></textarea>
-            <input type="submit" value="Parafrasear">
-        </form>
-        <a href="/">Volver</a>
-    </div>
+<body class="bg-gray-50">
 
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </a>
+            <div class="flex items-center gap-4"> 
+               <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de IA
+                  </a>
+                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de Plagio
+                  </a>
+                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Parafraseado
+                  </a>
+                   </a>
+                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Math Solve
+                  </a>
 
-        <script>
+                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Iniciar Sesión
+                  </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-20 md:py-24">
+        <div class="container mx-auto px-4">
+
+            <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-dark mb-4">Parafraseador de Texto</h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Ingresa un texto para obtener una versión alternativa y reescrita.
+                    </p>
+                </div>
+
+                <form action="/paraphrase" method="post">
+                    <div class="mb-4 relative">
+                        <label for="paraphrase-textarea" class="block text-sm font-medium text-gray-700 mb-2">Texto a parafrasear:</label>
+                        <textarea name="original_text" id="paraphrase-textarea" rows="10" required 
+                                  placeholder="Escribe tu texto aquí..." maxlength="1000"
+                                  class="w-full p-4 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition"></textarea>
+                        <div id="char-counter" class="absolute bottom-3 right-3 text-sm text-gray-400">0/1000</div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-lg transition duration-300 mt-2 text-lg">
+                        <i class="fas fa-pen-fancy mr-2"></i> Parafrasear
+                    </button>
+                </form>
+
+            </div>
+            
+            <div class="text-center mt-8">
+                 <a href="{{ url_for('plagio_bp.welcome') }}" class="text-gray-600 hover:text-primary transition">
+                    <i class="fas fa-arrow-left mr-2"></i> Volver a la página principal
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-12 mt-20"> 
+        <div class="container mx-auto px-4">
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p class="text-gray-400">&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
         // JavaScript para el contador de caracteres
         const textarea = document.getElementById('paraphrase-textarea');
         const counter = document.getElementById('char-counter');
         const maxLength = textarea.getAttribute('maxlength');
+
+        // Inicializar contador al cargar la página (por si hay texto autocompletado)
+        counter.textContent = `${textarea.value.length}/${maxLength}`;
 
         textarea.addEventListener('input', () => {
             const currentLength = textarea.value.length;
             counter.textContent = `${currentLength}/${maxLength}`;
         });
     </script>
+
 </body>
 </html>
-

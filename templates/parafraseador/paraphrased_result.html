@@ -1,20 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Texto Parafraseado</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texto Parafraseado - DECOPY AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="results-container">
-        <h1>Resultado del Parafraseo</h1>
-        <p><strong>Texto Original:</strong></p>
-        <p>{{ original_text }}</p>
-        <hr>
-        <p><strong>Texto Parafraseado:</strong></p>
-        <p>{{ paraphrased_text }}</p>
-        <a href="/paraphraser-page">Volver a intentar</a>
-        <br>
-        <a href="/">Volver a la página principal</a>
-    </div>
+<body class="bg-gray-50">
+
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </a>
+            <div class="flex items-center gap-4"> 
+                <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de IA
+                  </a>
+                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de Plagio
+                  </a>
+                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Parafraseado
+                  </a>
+                   </a>
+                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Math Solve
+                  </a>
+
+                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Iniciar Sesión
+                  </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-20 md:py-24">
+        <div class="container mx-auto px-4">
+            
+            <h1 class="text-4xl font-bold text-dark text-center mb-12">Resultado del Parafraseo</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-dark mb-4">Texto Original</h2>
+                    <div class="text-box bg-light p-4 rounded-lg border border-gray-200 text-gray-700 min-h-[200px]">
+                        <p>{{ original_text }}</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-primary">
+                    <h2 class="text-2xl font-bold text-primary mb-4">Texto Parafraseado</h2>
+                    <div class="text-box bg-blue-50 p-4 rounded-lg border border-primary/20 text-dark min-h-[200px]">
+                        <p>{{ paraphrased_text }}</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-12 flex justify-center flex-col sm:flex-row gap-4">
+                <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-primary hover:bg-secondary text-white font-medium py-3 px-8 rounded-lg transition duration-300">
+                    <i class="fas fa-redo mr-2"></i> Parafrasear Otro Texto
+                </a>
+                <a href="{{ url_for('plagio_bp.welcome') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-3 px-8 rounded-lg transition duration-300">
+                    Volver al Inicio
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-12 mt-20"> 
+        <div class="container mx-auto px-4">
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p class="text-gray-400">&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

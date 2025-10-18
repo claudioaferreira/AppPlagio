@@ -1,20 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Bienvenido | Detector de Plagio e IA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DECOPY AI - Detector de Contenido AI</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="container">
-        <h1>Suite de Herramientas de IA</h1>
-        <p>Selecciona una de las herramientas a continuación para empezar.</p>
-        
-        <div class="navigation-buttons">
-            <a href="{{ url_for('plagio_bp.plagio_page') }}" class="button-link">Detector de Plagio</a>
-            <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="button-link">Detector de Contenido IA</a>
-            <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="button-link">Parafraseador de Texto</a>
-            <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="button-link">Math Solve</a>
+<body class="bg-gray-50">
+    
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            
+            <div class="flex items-center">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </div>
+            
+            <div class="flex items-center gap-4"> 
+              <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de IA
+                  </a>
+                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de Plagio
+                  </a>
+                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Parafraseado
+                  </a>
+                   </a>
+                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Math Solve
+                  </a>
+
+                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Iniciar Sesión
+                  </a>
+            </div>
+
         </div>
-    </div>
+    </nav>
+
+    <section class="hero-bg text-white py-16 md:py-32">
+        <div class="container mx-auto px-4 grid md:grid-cols-2 items-center gap-10">
+        
+        <div class="text-center md:text-left">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            Detecta Contenido Generado por IA
+            </h1>
+            <p class="text-xl md:text-2xl mb-10 max-w-xl mx-auto md:mx-0">
+            Nuestra avanzada tecnología analiza textos para identificar contenido creado por inteligencia artificial con una precisión del 98%.
+            </p>
+        </div>
+
+        <div class="flex justify-center md:justify-end">
+             <img class="w-full max-w-xl" src="{{ url_for('static', filename='Picture.png') }}" alt="Detección IA">
+        </div>
+
+        </div>
+    </section>
+
+    <section class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-dark mb-4">¿Por qué elegir DECOPY AI?</h2>
+            <p class="text-gray-600 text-center max-w-2xl mx-auto mb-12">Nuestro detector de contenido AI utiliza algoritmos avanzados para ofrecer resultados precisos y confiables.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card bg-light p-8 rounded-xl transition duration-300">
+                    <div class="bg-primary w-14 h-14 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-bolt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Detección Rápida</h3>
+                    <p class="text-gray-600">Analiza textos en segundos con nuestra tecnología de procesamiento acelerado.</p>
+                </div>
+                
+                <div class="feature-card bg-light p-8 rounded-xl transition duration-300">
+                    <div class="bg-accent w-14 h-14 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Alta Precisión</h3>
+                    <p class="text-gray-600">Identifica contenido generado por IA con una tasa de precisión superior al 98%.</p>
+                </div>
+
+                <div class="feature-card bg-light p-8 rounded-xl transition duration-300">
+                    <div class="bg-secondary w-14 h-14 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Resultados Confiables</h3>
+                    <p class="text-gray-600">Obtén informes detallados con porcentajes de probabilidad y elementos detectados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-12"> 
+        <div class="container mx-auto px-4">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            
+            <div>
+            <h3 class="text-xl font-bold mb-4">DECOPY AI</h3>
+            <p class="text-gray-400">
+                La herramienta más confiable para detectar contenido generado por inteligencia artificial.
+            </p>
+            </div>
+            
+            <div>
+            <h4 class="font-bold mb-4">Enlaces Rápidos</h4>
+            <ul class="space-y-2">
+                <li><a href="#" class="text-gray-400 hover:text-white transition">Inicio</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white transition">Características</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white transition">Precios</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+            </ul>
+            </div>
+            
+            <div>
+            <h4 class="font-bold mb-4">Contacto</h4>
+            <ul class="space-y-2">
+                <li class="text-gray-400"><i class="fas fa-envelope mr-2"></i> info@decopyai.com</li>
+                <li class="text-gray-400"><i class="fas fa-phone mr-2"></i> +1 (555) 123-4567</li>
+                <li class="flex justify-center md:justify-start space-x-4 pt-2">
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook"></i></a>
+                </li>
+            </ul>
+            </div>
+
+        </div>
+        
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
+        </div>
+        
+        </div>
+    </footer>
+
 </body>
 </html>

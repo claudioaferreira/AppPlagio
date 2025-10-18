@@ -1,169 +1,214 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="es">
 <head>
-    <title>Informe de Análisis de Similitud Semántica</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Similitud - DECOPY AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    </head>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
 
-<body>
-    <div class="results-container">
-        <h1>Informe de Análisis de Similitud Semántica</h1>
-        <p class="methodology-info">
-            Evaluación comparativa de la originalidad mediante embeddings contextuales (paráfrasis y detección translingüe).
-        </p>
-        
-        <div class="comparison-grid">
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </a>
+            <div class="flex items-center gap-4"> 
+                <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de IA
+                  </a>
+                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de Plagio
+                  </a>
+                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Parafraseado
+                  </a>
+                   </a>
+                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Math Solve
+                  </a>
 
-            <div class="model-results">
-                <h2>Modelo 1: MPNet (Documento Completo)</h2>
-                <p class="model-description">Enfoque: Búsqueda tradicional. Compara el vector del documento completo contra la base de datos.</p>
+                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Iniciar Sesión
+                  </a>
+            </div>
+        </div>
+    </nav>
 
-                {% set M1_SCORE = model1_results.max_similarity %}
-                {% set M1_RISK = model1_results.risk_level %}
-                {% set M1_COLOR = model1_results.risk_color %}
-                {% set score_percent = "%.0f"|format(M1_SCORE * 100) %}
-                {% set M1_MATCH_COUNT = model1_results.match_count %}
+    <section class="py-20 md:py-24">
+        <div class="container mx-auto px-4">
+            
+            <h1 class="text-4xl font-bold text-dark text-center mb-4">Informe de Similitud Semántica</h1>
+            <p class="text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+                Evaluación comparativa de la originalidad mediante embeddings contextuales (paráfrasis y detección translingüe).
+            </p>
 
-                <div class="gauge-section">
-                    <h3>Puntaje Máximo de Similitud</h3>
-                    <div class="circular-progress"
-                        style="--gauge-percent: {{ score_percent }}%; --gauge-color: var(--{{ M1_COLOR }}-color);">
-                        <span class="progress-value">{{ score_percent }}%</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                {% set M1 = model1_results %}
+                {% set score_percent = "%.0f"|format(M1.max_similarity * 100) %}
+                <div class="flex flex-col bg-white p-6 rounded-xl shadow-lg border-l-4 border-gray-400">
+                    <h2 class="text-xl font-bold text-dark mb-2">Modelo 1: MPNet (Global)</h2>
+                    <p class="text-sm text-gray-500 mb-4">Compara el documento completo contra la base de datos.</p>
+                    
+                    <div class="flex justify-center items-center my-4">
+                        <div class="circular-progress" style="--gauge-percent: {{ score_percent }}%; --gauge-color: var(--{{ M1.risk_color }}-color);">
+                            <span class="progress-value">{{ score_percent }}%</span>
+                        </div>
                     </div>
-                    <p class="risk-verdict {{ M1_COLOR }}">
-                        ALERTA GLOBAL: <strong>{{ M1_RISK }}</strong>
+                    <p class="risk-verdict {{ M1.risk_color }}">
+                        ALERTA GLOBAL: <strong>{{ M1.risk_level }}</strong>
                     </p>
+                    <hr class="my-4">
+                    <div class="flex-grow">
+                        {% if M1.match_count > 0 %}
+                            <p class="font-semibold text-dark">Similitud global más alta: <strong>{{ score_percent }}%</strong></p>
+                            <p class="text-sm text-gray-600 mb-3">Top 5 Coincidencias:</p>
+                            <ul class="space-y-3">
+                                {% for result in M1.detailed_results | default([]) | slice(5) %}
+                                    {% if result is mapping %}
+                                    <li class="bg-light p-3 rounded-lg border border-gray-200">
+                                        <span class="block font-medium text-primary">Fuente ID: {{ result.document_id }}</span>
+                                        <span class="text-sm text-gray-700">Similitud: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong></span>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            {% if M1.match_count > 5 %}
+                                <p class="text-sm text-gray-500 mt-3">...y {{ M1.match_count - 5 }} documentos adicionales.</p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-gray-600 text-center py-4">No se encontraron documentos con similitud significativa.</p>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <hr>
-
-                {% if M1_MATCH_COUNT > 0 %}
-                <p class="highest-similarity">Documentos con coincidencia alta: <strong>{{ M1_MATCH_COUNT }}</strong>.</p>
-                <p>Similitud global más alta: <strong>{{ score_percent }}%</strong></p>
-                <p>Top 5 de Coincidencias:</p>
-                <ul>
-                    {# Bucle robusto para Top 5 #}
-                    {% for result in model1_results.detailed_results | default([]) | slice(5) %}
-                        {% if result is mapping %}
-                    <li>
-                        Fuente ID: <strong>{{ result.document_id }}</strong>
-                        <br>
-                        Similitud: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
-                    </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                {% if M1_MATCH_COUNT > 5 %}
-                    <p class="list-summary">...y {{ M1_MATCH_COUNT - 5 }} documentos adicionales.</p>
-                {% endif %}
-                {% else %}
-                <p class="no-plagiarism">No se encontraron documentos con similitud significativa.</p>
-                {% endif %}
-            </div>
-            <div class="model-results granular-model">
-                <h2>Modelo 2: MPNet (Fragmentado)</h2>
-                <p class="model-description">Enfoque: **Granular**. Evalúa la similitud a nivel de **frase** (Detección de Paráfrasis).</p>
-
-                {% set M2_SCORE = model2_results.max_similarity %}
-                {% set M2_RISK = model2_results.risk_level %}
-                {% set M2_COLOR = model2_results.risk_color %}
-                {% set score_percent_m2 = "%.0f"|format(M2_SCORE * 100) %}
-                {% set M2_MATCH_COUNT = model2_results.match_count %}
-
-                <div class="gauge-section">
-                    <h3>Puntaje Máximo de Fragmento</h3>
-                    <div class="circular-progress"
-                        style="--gauge-percent: {{ score_percent_m2 }}%; --gauge-color: var(--{{ M2_COLOR }}-color);">
-                        <span class="progress-value">{{ score_percent_m2 }}%</span>
+                {% set M2 = model2_results %}
+                {% set score_percent_m2 = "%.0f"|format(M2.max_similarity * 100) %}
+                <div class="flex flex-col bg-white p-6 rounded-xl shadow-lg border-l-4 border-primary">
+                    <h2 class="text-xl font-bold text-dark mb-2">Modelo 2: MPNet (Fragmentado)</h2>
+                    <p class="text-sm text-gray-500 mb-4">Evalúa la similitud a nivel de frase (Paráfrasis).</p>
+                    
+                    <div class="flex justify-center items-center my-4">
+                        <div class="circular-progress" style="--gauge-percent: {{ score_percent_m2 }}%; --gauge-color: var(--{{ M2.risk_color }}-color);">
+                            <span class="progress-value">{{ score_percent_m2 }}%</span>
+                        </div>
                     </div>
-                    <p class="risk-verdict {{ M2_COLOR }}">
-                        ALERTA DE FRAGMENTO: <strong>{{ M2_RISK }}</strong>
+                    <p class="risk-verdict {{ M2.risk_color }}">
+                        ALERTA DE FRAGMENTO: <strong>{{ M2.risk_level }}</strong>
                     </p>
+                    <hr class="my-4">
+                    <div class="flex-grow">
+                        {% if M2.match_count > 0 %}
+                            <p class="font-semibold text-dark">Similitud máxima de fragmento: <strong>{{ score_percent_m2 }}%</strong></p>
+                            <p class="text-sm text-gray-600 mb-3">Top 3 Coincidencias:</p>
+                            <ul class="space-y-3">
+                                {% for result in M2.detailed_results | default([]) | slice(3) %}
+                                    {% if result is mapping %}
+                                    <li class="bg-light p-3 rounded-lg border border-gray-200">
+                                        <span class="block font-medium text-primary">Fuente ID: {{ result.document_id }}</span>
+                                        <span class="text-sm text-gray-700">Similitud: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong></span>
+                                        {% if result.matched_sentence %}
+                                            <p class="matched-text">Fragmento: <em>{{ result.matched_sentence | truncate(80, true) }}...</em></p>
+                                        {% endif %}
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            {% if M2.match_count > 3 %}
+                                <p class="text-sm text-gray-500 mt-3">...y {{ M2.match_count - 3 }} documentos adicionales.</p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-gray-600 text-center py-4">No se encontraron fragmentos con similitud significativa.</p>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <hr>
-
-                {% if M2_MATCH_COUNT > 0 %}
-                <p class="highest-similarity">Documentos con fragmentos similares: <strong>{{ M2_MATCH_COUNT }}</strong>.</p>
-                <p>Similitud máxima de fragmento: <strong>{{ score_percent_m2 }}%</strong></p>
-                <p>Top 3 Coincidencias y Fragmento Máximo:</p>
-                <ul>
-                    {# Bucle robusto para Top 3 #}
-                    {% for result in model2_results.detailed_results | default([]) | slice(3) %}
-                        {% if result is mapping %}
-                    <li>
-                        Fuente ID: <strong>{{ result.document_id }}</strong>
-                        <br>
-                        Similitud Máxima: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
-                        {% if result.matched_sentence %}
-                        <p class="matched-text">Fragmento: <em>{{ result.matched_sentence | truncate(80, true) }}...</em></p>
-                        {% endif %}
-                    </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                {% if M2_MATCH_COUNT > 3 %}
-                    <p class="list-summary">...y {{ M2_MATCH_COUNT - 3 }} documentos adicionales identificados.</p>
-                {% endif %}
-                {% else %}
-                <p class="no-plagiarism">No se encontraron fragmentos con similitud significativa.</p>
-                {% endif %}
-            </div>
-            <div class="model-results roberta-model">
-                <h2>Modelo 3: XLM-RoBERTa (Alto Rigor)</h2>
-                <p class="model-description">Enfoque: **Alta Precisión**. Ideal para Detección Translingüe y Sentencia a Sentencia.</p>
-
-                {% set M3_SCORE = model3_results.max_similarity %}
-                {% set M3_RISK = model3_results.risk_level %}
-                {% set M3_COLOR = model3_results.risk_color %}
-                {% set score_percent_m3 = "%.0f"|format(M3_SCORE * 100) %}
-                {% set M3_MATCH_COUNT = model3_results.match_count %}
-
-                <div class="gauge-section">
-                    <h3>Puntaje Máximo de Fragmento</h3>
-                    <div class="circular-progress"
-                        style="--gauge-percent: {{ score_percent_m3 }}%; --gauge-color: var(--{{ M3_COLOR }}-color);">
-                        <span class="progress-value">{{ score_percent_m3 }}%</span>
+                {% set M3 = model3_results %}
+                {% set score_percent_m3 = "%.0f"|format(M3.max_similarity * 100) %}
+                <div class="flex flex-col bg-white p-6 rounded-xl shadow-lg border-l-4 border-accent">
+                    <h2 class="text-xl font-bold text-dark mb-2">Modelo 3: XLM-RoBERTa</h2>
+                    <p class="text-sm text-gray-500 mb-4">Detección Translingüe y de Alta Precisión.</p>
+                    
+                    <div class="flex justify-center items-center my-4">
+                        <div class="circular-progress" style="--gauge-percent: {{ score_percent_m3 }}%; --gauge-color: var(--{{ M3.risk_color }}-color);">
+                            <span class="progress-value">{{ score_percent_m3 }}%</span>
+                        </div>
                     </div>
-                    <p class="risk-verdict {{ M3_COLOR }}">
-                        ALERTA DE FRAGMENTO: <strong>{{ M3_RISK }}</strong>
+                    <p class_verdict="{{ M3.risk_color }}">
+                        ALERTA DE FRAGMENTO: <strong>{{ M3.risk_level }}</strong>
                     </p>
+                    <hr class="my-4">
+                    <div class="flex-grow">
+                        {% if M3.match_count > 0 %}
+                            <p class="font-semibold text-dark">Similitud máxima de fragmento: <strong>{{ score_percent_m3 }}%</strong></p>
+                            <p class="text-sm text-gray-600 mb-3">Top 3 Coincidencias:</p>
+                            <ul class="space-y-3">
+                                {% for result in M3.detailed_results | default([]) | slice(3) %}
+                                    {% if result is mapping %}
+                                    <li class="bg-light p-3 rounded-lg border border-gray-200">
+                                        <span class="block font-medium text-primary">Fuente ID: {{ result.document_id }}</span>
+                                        <span class="text-sm text-gray-700">Similitud: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong></span>
+                                        {% if result.matched_sentence %}
+                                            <p class="matched-text">Fragmento: <em>{{ result.matched_sentence | truncate(80, true) }}...</em></p>
+                                        {% endif %}
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            {% if M3.match_count > 3 %}
+                                <p class="text-sm text-gray-500 mt-3">...y {{ M3.match_count - 3 }} documentos adicionales.</p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-gray-600 text-center py-4">No se encontraron fragmentos con similitud significativa.</p>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <hr>
+            </div>
 
-                {% if M3_MATCH_COUNT > 0 %}
-                <p class="highest-similarity">Documentos con fragmentos similares: <strong>{{ M3_MATCH_COUNT }}</strong>.</p>
-                <p>Similitud máxima de fragmento: <strong>{{ score_percent_m3 }}%</strong></p>
-                <p>Top 3 Coincidencias y Fragmento Máximo:</p>
-                <ul>
-                    {# Bucle robusto para Top 3 #}
-                    {% for result in model3_results.detailed_results | default([]) | slice(3) %}
-                        {% if result is mapping %}
-                    <li>
-                        Fuente ID: <strong>{{ result.document_id }}</strong>
-                        <br>
-                        Similitud Máxima: <strong>{{ "%.2f"|format(result.similarity_score * 100) }}%</strong>
-                        {% if result.matched_sentence %}
-                        <p class="matched-text">Fragmento: <em>{{ result.matched_sentence | truncate(80, true) }}...</em></p>
-                        {% endif %}
-                    </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                {% if M3_MATCH_COUNT > 3 %}
-                    <p class="list-summary">...y {{ M3_MATCH_COUNT - 3 }} documentos adicionales identificados.</p>
-                {% endif %}
-                {% else %}
-                <p class="no-plagiarism">No se encontraron fragmentos con similitud significativa.</p>
-                {% endif %}
+            <div class="text-center mt-12 flex justify-center flex-col sm:flex-row gap-4">
+                <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-primary hover:bg-secondary text-white font-medium py-3 px-8 rounded-lg transition duration-300">
+                    <i class="fas fa-redo mr-2"></i> Analizar Otro Documento
+                </a>
+                <a href="{{ url_for('plagio_bp.welcome') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-3 px-8 rounded-lg transition duration-300">
+                    Volver al Inicio
+                </a>
             </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-12 mt-20"> 
+        <div class="container mx-auto px-4">
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p class="text-gray-400">&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
             </div>
-        
-        <br>
-        <a href="/">Volver al Inicio</a>
-    </div>
+        </div>
+    </footer>
+
 </body>
-
 </html>

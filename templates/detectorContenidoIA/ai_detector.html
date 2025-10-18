@@ -1,23 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Detector de Contenido AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Contenido AI - DECOPY AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3a0ca3',
+                        accent: '#7209b7',
+                        light: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="container">
-        <h1>Detector de Contenido AI</h1>
-        <p>Analiza tu documento para determinar si fue escrito por un humano o una IA.</p>
-        <form id="aiForm" action="/ai-detect" method="post" enctype="multipart/form-data">
-            <label for="documento">Selecciona un documento para analizar:</label><br><br>
-            <input type="file" id="documento" name="documento" required><br><br>
-            <input type="submit" value="Analizar Texto">
-        </form>
-        <a href="/">Volver a la página principal</a>
-    </div>
-        <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div class="loading-message">
+<body class="bg-gray-50">
+
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="{{ url_for('plagio_bp.welcome') }}" class="flex items-center">
+                <div class="bg-primary p-2 rounded-lg mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
+            </a>
+            <div class="flex items-center gap-4"> 
+               <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de IA
+                  </a>
+                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Detector de Plagio
+                  </a>
+                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Parafraseado
+                  </a>
+                   </a>
+                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Math Solve
+                  </a>
+
+                <a href="/login" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                      Iniciar Sesión
+                  </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-20 md:py-24">
+        <div class="container mx-auto px-4">
+
+            <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-dark mb-4">Detector de Contenido AI</h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Analiza un documento para determinar si fue escrito por un humano o una IA.
+                    </p>
+                </div>
+
+                <form id="aiForm" action="/ai-detect" method="post" enctype="multipart/form-data">
+                    
+                    <label for="documento" class="flex flex-col items-center justify-center w-full h-56 border-2 border-primary border-dashed rounded-lg cursor-pointer bg-light hover:bg-gray-100 transition">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fas fa-cloud-upload-alt text-primary text-4xl mb-4"></i>
+                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
+                            <p class="text-xs text-gray-500">Archivos .txt, .pdf, .docx</p>
+                            <p id="file-name" class="text-sm text-accent font-medium mt-2"></p>
+                        </div>
+                        <input type="file" id="documento" name="documento" required class="hidden" />
+                    </label>
+
+                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-lg transition duration-300 mt-6 text-lg">
+                        <i class="fas fa-search mr-2"></i> Analizar Texto
+                    </button>
+                </form>
+
+            </div>
+            
+            <div class="text-center mt-8">
+                 <a href="{{ url_for('plagio_bp.welcome') }}" class="text-gray-600 hover:text-primary transition">
+                    <i class="fas fa-arrow-left mr-2"></i> Volver a la página principal
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-12 mt-20"> 
+        <div class="container mx-auto px-4">
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p class="text-gray-400">&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="loading-overlay" class="fixed top-0 left-0 w-full h-full bg-dark/80 z-50 flex-col justify-center items-center hidden">
+        <div class="spinner"></div> <div class="loading-message text-white text-xl mt-4 font-medium">
             Procesando documento. Por favor, espere...
         </div>
     </div>
@@ -26,17 +115,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('aiForm');
             const loadingOverlay = document.getElementById('loading-overlay');
-            const fileInput = form.querySelector('input[type="file"]');
+            const fileInput = document.getElementById('documento');
+            const fileNameDisplay = document.getElementById('file-name');
+
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = fileInput.files[0].name;
+                } else {
+                    fileNameDisplay.textContent = '';
+                }
+            });
 
             form.addEventListener('submit', function(event) {
-                // Solo muestra el loader si se ha seleccionado un archivo
                 if (fileInput.files.length > 0) {
-                    loadingOverlay.style.display = 'flex';
+                    // Muestra el overlay usando clases de Tailwind
+                    loadingOverlay.classList.remove('hidden');
+                    loadingOverlay.classList.add('flex');
                 }
-                // El navegador continúa con el envío del formulario. 
-                // La pantalla de carga se oculta automáticamente cuando el servidor devuelve la página de resultados.
             });
         });
     </script>
+
 </body>
 </html>
