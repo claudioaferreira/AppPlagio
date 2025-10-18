@@ -3,7 +3,7 @@ from controllers.paraphraser_controller import get_paraphraser_page, get_paraphr
 
 paraphraser_bp = Blueprint('paraphraser_bp', __name__)
 
-@paraphraser_bp.route('/paraphraser-page')
+@paraphraser_bp.route('/parafraseador/paraphraser-page')
 def paraphraser_page():
     return get_paraphraser_page()
 

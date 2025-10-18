@@ -53,7 +53,7 @@ def get_plagiarism_results():
     model3_results = roberta_granular_detector(document_content)
 
     # 4. Renderizar la plantilla con los TRES resultados
-    return render_template('results.html', 
+    return render_template('detectorPlagio/plagio_results.html', 
         model1_results=model1_results,
         model2_results=model2_results,
         model3_results=model3_results)

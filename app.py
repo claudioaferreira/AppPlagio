@@ -2,7 +2,7 @@
 import os
 import sys
 from flask import Flask
-from routes.routesAiTest import AiTest_bp
+from routes.routesMath_solve import AiTest_bp
 from routes.routesPlagio import plagio_bp
 from routes.routesAi_detector import ai_detector_bp
 from routes.routesParaphraser import paraphraser_bp

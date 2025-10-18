@@ -7,9 +7,9 @@ plagio_bp = Blueprint('plagio_bp', __name__)
 def welcome():
     return render_template('index.html')
 
-@plagio_bp.route('/plagio-page', methods=['GET', 'POST'])
+@plagio_bp.route('/detectorPlagio/plagio-page', methods=['GET', 'POST'])
 def plagio_page():
-    return render_template('plagio.html')
+    return render_template('detectorPlagio/plagio_upload.html')
 
 @plagio_bp.route('/upload', methods=['POST'])
 def upload_file():

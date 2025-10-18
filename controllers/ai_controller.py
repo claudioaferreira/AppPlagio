@@ -43,7 +43,7 @@ def get_ai_results():
     result_lgbm_fe = predict_lgbm_fe(document_content)
     report_lgbm_fe, accuracy_lgbm_fe = evaluate_lgbm_fe(LABELS)
 
-    return render_template('ai_results.html',
+    return render_template('detectorContenidoIA/ai_results.html',
                            # Datos de Regresión Logística
                            result_lr=prediction_lr,
                            report_lr=report_lr,

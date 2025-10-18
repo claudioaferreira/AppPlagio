@@ -100,7 +100,7 @@ def test_ai_functionality():
 
     # Pasamos los datos al template (ai_data si es POST exitoso, o None)
     return render_template(
-        'ai_test.html', 
+        'mathSolve/math_solve.html', 
         ai_response=ai_data,
         error=error_message, 
         user_content=user_content
