@@ -7,8 +7,9 @@ def get_paraphraser_page():
 
 def get_paraphrased_result():
     original_text = request.form['original_text']
-    paraphrased_text = parafreasearTexto(original_text)
-    
+    tone = request.form.get('tone')
+    paraphrased_text = parafreasearTexto(original_text, tone=tone)
     return render_template('parafraseador/paraphrased_result.html',
                            original_text=original_text,
-                           paraphrased_text=paraphrased_text)
+                           paraphrased_text=paraphrased_text,
+                           tone=tone)
