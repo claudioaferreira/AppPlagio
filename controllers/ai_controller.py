@@ -2,12 +2,12 @@ import io
 from flask import render_template, request
 from docx import Document
 #funciones de Regresión Logística
-from utils.ai_detector import predict_ai_content as predict_lr, evaluate_model as evaluate_lr, LABELS
+  #from utils.ai_detector import predict_ai_content as predict_lr, evaluate_model as evaluate_lr, LABELS
 #funciones de LightGBM
-from utils.ai_detectorLGBMClassifierFIX import predict_ai_content as predict_lgbm, evaluate_model as evaluate_lgbm 
+from utils.detectorIA.ai_detectorLGBMClassifierFIX import predict_ai_content as predict_main, get_text_stats, evaluate_model as evaluate_main, LABELS
 #funciones de LightGBM+Feature Engineering
-from utils.ai_detectorLGBMClassifierFE import StylometricFeatureExtractor, predict_ai_content as predict_lgbm_fe, evaluate_model as evaluate_lgbm_fe
-
+  #from utils.ai_detectorLGBMClassifierFE import StylometricFeatureExtractor, predict_ai_content as predict_lgbm_fe, evaluate_model as evaluate_lgbm_fe
+from utils.detectorIA.ai_detectorRoBERTa import predict_ai_content as predict_roberta, get_text_stats
 
 def get_ai_results():
     if 'documento' not in request.files or request.files['documento'].filename == '':
@@ -32,28 +32,34 @@ def get_ai_results():
 
 
       # 1. Predicción y Evaluación de Regresión Logística (LR)
-    prediction_lr = predict_lr(document_content)
-    report_lr, accuracy_lr = evaluate_lr(LABELS) 
+    #prediction_lr = predict_lr(document_content)
+    #report_lr, accuracy_lr = evaluate_lr(LABELS) 
 
     # 2. Predicción y Evaluación de LightGBM (LGBM)
-    prediction_lgbm = predict_lgbm(document_content)
-    report_lgbm, accuracy_lgbm = evaluate_lgbm(LABELS)
+    #prediction_lgbm = predict_lgbm(document_content)
+    #report_lgbm, accuracy_lgbm = evaluate_lgbm(LABELS)
 
     # 3. Predicción y Evaluación de LightGBM + Feature Engineering (LGBM_FE)
-    result_lgbm_fe = predict_lgbm_fe(document_content)
-    report_lgbm_fe, accuracy_lgbm_fe = evaluate_lgbm_fe(LABELS)
+    #result_lgbm_fe = predict_lgbm_fe(document_content)
+    #report_lgbm_fe, accuracy_lgbm_fe = evaluate_lgbm_fe(LABELS)
+    result_data = predict_main(document_content)
+    text_stats = get_text_stats(document_content)
+    report_string, accuracy = evaluate_main(LABELS)
+
+    # 4. Predicción con RoBERTa
+    result_roberta = predict_roberta(document_content)
+    text_stats_roberta = get_text_stats(document_content)
 
     return render_template('detectorContenidoIA/ai_results.html',
-                           # Datos de Regresión Logística
-                           result_lr=prediction_lr,
-                           report_lr=report_lr,
-                           accuracy_lr=accuracy_lr,
-                           # Datos de LightGBM
-                           result_lgbm=prediction_lgbm,
-                           report_lgbm=report_lgbm,
-                           accuracy_lgbm=accuracy_lgbm,
-                           # Datos de LightGBM + Feature Engineering
-                           result_lgbm_fe=result_lgbm_fe,
-                           report_lgbm_fe=report_lgbm_fe,
-                           accuracy_lgbm_fe=accuracy_lgbm_fe
-                           )
+                           original_text=document_content,      # El texto original para mostrarlo
+                           result_data=result_data,           # El diccionario con el puntaje y la etiqueta
+                           stats=text_stats,                  # El diccionario con palabras/caracteres
+                           
+                           # (Opcional) Si aún quieres mostrar el reporte técnico
+                           report_lgbm_fe=report_string,
+                           accuracy_lgbm_fe=accuracy
+
+                           #RoBERTa
+                            ,result_roberta=result_roberta
+                            ,stats_roberta=text_stats_roberta
+                          )

@@ -5,9 +5,9 @@ import sys
 from flask import render_template, request
 from docx import Document
 # Importamos los tres detectores con alias descriptivos para el código
-from utils.detect_plagiarism import find_plagiarism_with_sql_server as mpnet_full_doc_detector
-from utils.detect_plagiarism_granular import find_plagiarism_with_roberta_segmentation as mpnet_granular_detector
-from utils.detect_plagiarismRobertaEmbeddings import find_plagiarism_with_roberta_embeddings as roberta_granular_detector
+from utils.plagioDetector.detect_plagiarism import find_plagiarism_with_sql_server as mpnet_full_doc_detector
+from utils.plagioDetector.detect_plagiarism_granular import find_plagiarism_with_roberta_segmentation as mpnet_granular_detector
+from utils.plagioDetector.detect_plagiarismRobertaEmbeddings import find_plagiarism_with_roberta_embeddings as roberta_granular_detector
 
 def get_plagiarism_results():
     # Estructura de resultados vacíos/error para evitar fallos en el template

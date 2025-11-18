@@ -11,7 +11,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from scipy.sparse import hstack 
 import numpy as np 
 import re 
-from utils.ai_detectorLGBMClassifierFE import StylometricFeatureExtractor 
+from utils.detectorIA.ai_detectorLGBMClassifierFE import StylometricFeatureExtractor 
 
 
 # en la ubicación correcta del entorno virtual (.venv).

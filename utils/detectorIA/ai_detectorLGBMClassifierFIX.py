@@ -16,7 +16,7 @@ import nltk
 from nltk.corpus import stopwords
 import unidecode
 import lightgbm as lgb 
-
+import numpy as np
 
 # Define las rutas de los archivos del dataset
 TRAIN_FILE = os.path.join('pan-25-ai-detection', 'train.jsonl')
@@ -32,6 +32,8 @@ LABELS = [
     "Escrito por máquina, luego editado por humanos",
     "Texto profundamente mezclado"
 ]
+
+IA_WEIGHTS = [0.0, 0.5, 0.4, 0.8, 0.6, 1.0]
 
 def load_data(file_path):
     """Carga los datos de un archivo .jsonl y los devuelve como un DataFrame."""
@@ -122,24 +124,48 @@ def predict_ai_content(document_content):
         print("El modelo no existe. Entrenando primero...")
         train_and_save_model()
         
-    # Carga el modelo y el vectorizador desde el disco
+    # Carga el modelo y el vectorizador
     classifier = joblib.load(MODEL_PATH)
     vectorizer = joblib.load(VECTORIZER_PATH)
 
     # Transforma el contenido del nuevo documento
     text_vectorized = vectorizer.transform([document_content])
-    
-     # Realiza la predicción
-    prediction = classifier.predict(text_vectorized)
-    
-    # La predicción te da un número, necesitas convertirlo en una etiqueta de texto
-    prediction_number = prediction[0]
 
-    # Verifica si el número está dentro del rango de etiquetas
-    if 0 <= prediction_number < len(LABELS):
-        return LABELS[prediction_number]
+    # 1. Obtenemos las probabilidades para TODAS las 6 clases
+    probabilities = classifier.predict_proba(text_vectorized)[0]
+    
+    # 2. Obtenemos la predicción principal (la clase con mayor probabilidad)
+    prediction_index = np.argmax(probabilities)
+
+    # 3. Calculamos el "Puntaje IA"
+    #    Asumimos que la clase 0 ("Completamente escrito por humanos") es la única "humana".
+    #    El resto de clases (1 a 5) implican algún nivel de IA.
+    #human_score_prob = probabilities[0]
+
+    # El puntaje de IA es la suma de las probabilidades del resto de clases.
+    # Multiplicamos por 100 para tener el porcentaje.
+    ai_score_percent = sum(prob * weight for prob, weight in zip(probabilities, IA_WEIGHTS)) * 100
+
+    # 4. Obtenemos la etiqueta de texto de la predicción principal
+    if 0 <= prediction_index < len(LABELS):
+        prediction_label = LABELS[prediction_index]
     else:
-        return "Categoría desconocida"
+        prediction_label = "Categoría desconocida"
+
+        # 5. Devolvemos un diccionario con toda la información
+    return {
+        "label": prediction_label,    # Ej: "Iniciado por humanos..."
+        "ai_score": ai_score_percent  # Ej: 96.36
+    }
+
+def get_text_stats(document_content):
+    """Calcula estadísticas simples del texto."""
+    characters = len(document_content)
+    words = len(document_content.split())
+    return {
+        "characters": characters,
+        "words": words
+    }
 
 def evaluate_model(labels_list):
     """Evalúa el modelo con el conjunto de datos de desarrollo y muestra el informe. - MODELO TF-IDF + LightGBM"""
