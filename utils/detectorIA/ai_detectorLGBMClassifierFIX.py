@@ -1,11 +1,17 @@
-# Clasificación de texto con Machine Learning
-# El LightGBM es una técnica de boosting que construye muchos árboles de decisión secuencialmente.
-# Captura No Linealidad: Los árboles de decisión pueden capturar relaciones complejas y no lineales entre las combinaciones de trigramas (las features) y las etiquetas de clase, algo que la Regresión Logística no puede hacer. Esto es crucial para distinguir los sutiles matices del texto "humanizado" o "mezclado".
-# Rendimiento en Datos Dispersos: LightGBM utiliza un algoritmo llamado GOSS (Gradient-based One-Side Sampling) que le permite entrenar de forma muy rápida y eficiente en conjuntos de datos con muchas features cero (como tu matriz TF-IDF), superando a menudo a XGBoost y a modelos lineales en velocidad y precisión.
-# Hiperparámetros de F1-score:
-# n_estimators=1000 y learning_rate=0.05: Utilizamos muchos árboles y pasos pequeños para afinar el modelo y evitar el sobreajuste.
-# num_leaves=60: Aumentamos la complejidad de cada árbol, permitiendo que el modelo aprenda patrones más intrincados.
+# Modelo estándar basado únicamente en TF-IDF + LightGBM
 
+# ➤ Este script usa un pipeline clásico:
+# TF-IDF (1–3 n-gramas)
+# Entrena LightGBM como clasificador multicategoría
+# No usa inforación estilométrica extra
+# Usa parámetros optimizados para F1-score
+# Produce no solo la categoría, sino un puntaje IA (IA-score) basado en pesos
+# ➤ Explicación técnica resumida:
+# El modelo se basa exclusivamente en la representación vectorial TF-IDF.
+# Todas las features provienen del texto segmentado en tokens/gramas.
+# No evalúa estilo, solo contenido.
+# Es más rápido y más simple.
+# Ideal como baseline o como versión “lite”.
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
@@ -173,7 +179,7 @@ def evaluate_model(labels_list):
         print("Modelo no entrenado. Por favor, entrene el modelo primero.")
         return
         
-    print("Evaluando el modelo con el conjunto de datos de desarrollo...")
+    print("Evaluando el modelo de detección de IA TF-IDF + LightGBM")
     dev_df = load_data(DEV_FILE)
     
     classifier = joblib.load(MODEL_PATH)

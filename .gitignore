@@ -8,4 +8,5 @@ corpus_wikipedia_es
 # Archivos compilados de Python
 __pycache__/
 *.pyc
+/venv
 

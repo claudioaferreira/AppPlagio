@@ -1,19 +1,24 @@
-# Clasificación de texto con Machine Learning
-# El LightGBM es una técnica de boosting que construye muchos árboles de decisión secuencialmente.
-# Captura No Linealidad: Los árboles de decisión pueden capturar relaciones complejas y no lineales entre las combinaciones de trigramas (las features) y las etiquetas de clase, algo que la Regresión Logística no puede hacer. Esto es crucial para distinguir los sutiles matices del texto "humanizado" o "mezclado".
-# Rendimiento en Datos Dispersos: LightGBM utiliza un algoritmo llamado GOSS (Gradient-based One-Side Sampling) que le permite entrenar de forma muy rápida y eficiente en conjuntos de datos con muchas features cero (como tu matriz TF-IDF), superando a menudo a XGBoost y a modelos lineales en velocidad y precisión.
-# Hiperparámetros de F1-score:
-# n_estimators=1000 y learning_rate=0.05: Utilizamos muchos árboles y pasos pequeños para afinar el modelo y evitar el sobreajuste.
-# num_leaves=60: Aumentamos la complejidad de cada árbol, permitiendo que el modelo aprenda patrones más intrincados.
+# Modelo avanzado: TF-IDF + Ingeniería de Características Estilométricas (FE) + LightGBM
 
+# ➤ Qué hace:
+# Este script añade información adicional que describe cómo escribe la persona/modelo:
+# TF-IDF (200k features)
+# + 7 características estilométricas extra (engeniería de features)
+# Se combinan con hstack
+# LightGBM se entrena con una matriz híbrida
 
-# El proceso será el siguiente: #ayuda a LightGBM a diferenciar el cómo se escribe del qué se escribe
-# Inicio: Iniciando el entrenamiento del modelo de detección de IA (LightGBM) con Feature Engineering (Ingeniería de Características Estilométricas)...
-# Vectorización: Se crearán las 200,000 columnas de TF-IDF y las 7 nuevas columnas estilométricas.
-# Matriz Combinada: Se imprimirá el mensaje: INFO: Matriz de características final creada con 200007 columnas.
-# Entrenamiento: Se entrenará LightGBM (usando los n_estimators=750 y num_leaves=50 optimizados).
-# Guardado: Se guardarán los tres archivos.
-# Evaluación: Se mostrará el nuevo Informe de Clasificación (Consola).
+# Parámteros modficados para optimizar velocidad (training pesado)
+# ➤ Explicación técnica resumida:
+# Además del contenido textual (TF-IDF), incluye características como:
+# Longitud media de palabra
+# TTR (diversidad léxica)
+# Longitud media de oración
+# Densidad de puntuación
+# Frecuencia de palabras funcionales
+# Densidad de mayúsculas
+# Permite detectar señales que no están en los n-gramas, sino en el estilo.
+# Es un modelo más completo, robusto y difícil de engañar.
+# Ideal como versión avanzada/pro del detector.
 
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -50,6 +55,8 @@ LABELS = [
     "Escrito por máquina, luego editado por humanos",
     "Texto profundamente mezclado"
 ]
+
+IA_WEIGHTS = [0.0, 0.5, 0.4, 0.8, 0.6, 1.0]
 
 def load_data(file_path):
     """Carga los datos de un archivo .jsonl y los devuelve como un DataFrame."""
@@ -207,7 +214,10 @@ def train_and_save_model():
 
 
 def predict_ai_content(document_content):
-    """Carga el modelo guardado y predice la categoría del documento."""
+    """
+    Carga el modelo guardado, predice la categoría del documento y calcula el AI Score.
+    Retorna un diccionario: {"label": "...", "ai_score": ...}
+    """
     # Verificar existencia de todos los archivos
     if not (os.path.exists(MODEL_PATH) and os.path.exists(VECTORIZER_PATH) and os.path.exists(STYLOMETRIC_EXTRACTOR_PATH)):
         print("El modelo no existe. Entrenando primero...")
@@ -227,15 +237,25 @@ def predict_ai_content(document_content):
     # 3. Combinación de características
     X_combined = hstack([X_tfidf, X_stylometric])
     
-    # Realiza la predicción
-    prediction = classifier.predict(X_combined)
-    
-    prediction_number = prediction[0]
+    # Realiza la predicción de probabilidades
+    probabilities = classifier.predict_proba(X_combined)[0]
+    prediction_index = np.argmax(probabilities)
 
-    if 0 <= prediction_number < len(LABELS):
-        return LABELS[prediction_number]
+    # 4. Cálculo del AI Score
+    ai_score_percent = sum(prob * weight for prob, weight in zip(probabilities, IA_WEIGHTS)) * 100
+    
+    # 5. Obtener la etiqueta
+    if 0 <= prediction_index < len(LABELS):
+        prediction_label = LABELS[prediction_index]
     else:
-        return "Categoría desconocida"
+        prediction_label = "Categoría desconocida"
+
+    # 6. Devolver el diccionario (soluciona el error jinja2)
+    return {
+        "label": prediction_label,    
+        "ai_score": ai_score_percent  
+    }
+
 
 def evaluate_model(labels_list):
     """Evalúa el modelo con el conjunto de datos de desarrollo y muestra el informe."""
@@ -244,7 +264,7 @@ def evaluate_model(labels_list):
         print("Modelo no entrenado. Por favor, entrene el modelo primero.")
         return
         
-    print("Evaluando el modelo con el conjunto de datos de desarrollo...")
+    print("Evaluando el modelo  de detección de IA (LightGBM) con Feature Engineering...")
     dev_df = load_data(DEV_FILE)
     
     # Carga todos los objetos
