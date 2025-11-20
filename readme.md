@@ -1,7 +1,49 @@
-# Detector de Plagio y Contenido de IA 📝
+# 🛡️ AppPlagio: Suite de Inteligencia Artificial para Análisis de Texto
 
+**AppPlagio** es una plataforma web avanzada diseñada para la validación de originalidad, análisis forense de textos y asistencia en redacción mediante Inteligencia Artificial.
 
-Este proyecto es una aplicación web avanzada para la validación de la originalidad del texto. Utiliza un enfoque de análisis semántico para entender el significado del texto, lo que le permite identificar plagio por paráfrasis. Además, incluye un segundo componente que clasifica si un texto fue escrito por un humano o por una inteligencia artificial.
+El sistema integra múltiples modelos de **Machine Learning** y **Deep Learning** para ofrecer cuatro módulos principales: detección de plagio semántico, clasificación de texto humano vs. IA, reescritura estilística y resolución matemática paso a paso.
+
+## 🚀 Funcionalidades Principales
+
+### 1. Detector de Plagio Semántico (Enfoque Granular)
+A diferencia de los detectores tradicionales que buscan coincidencias exactas, este módulo entiende el significado del texto.
+- **Tecnología:** Utiliza modelos de embeddings (`stsb-xlm-r-multilingual` y `paraphrase-multilingual-mpnet-base-v2`) para transformar frases en vectores.
+- **Capacidad:** Detecta plagio por paráfrasis (textos reescritos con otras palabras pero mismo significado).
+- **Método:** Análisis granular por oraciones y comparación de similitud del coseno contra una base de datos vectorial en SQL Server.
+
+### 2. Detector de Contenido Generado por IA
+Clasifica si un texto fue escrito por un humano o por modelos de lenguaje (ChatGPT, Gemini, Llama, etc.).
+- **Modelo:** **LightGBM** (Light Gradient Boosting Machine) optimizado para alta precisión.
+- **Análisis:** Utiliza **TF-IDF** con n-gramas (1-3) para analizar patrones lingüísticos y secuencias de palabras, generando un "AI Score" de probabilidad.
+- **Clases:** Identifica desde "Completamente humano" hasta "Texto profundamente mezclado" o "Editado por máquina".
+
+### 3. Parafraseador Multi-Tono (GenAI)
+Reescritura inteligente de textos manteniendo el significado original pero cambiando el estilo.
+- **Motor:** **IBM Granite** (`ibm-granite/granite-4.0-h-1b`), un modelo causal robusto.
+- **Estilos:** Soporta más de 20 tonos, incluyendo: *Legal, Médico, Académico, Creativo, Simplificado, Agresivo, etc.*
+
+### 4. Math Solver (Razonamiento Matemático)
+Resuelve problemas matemáticos complejos mostrando el procedimiento y la lógica.
+- **Motor:** API de **Google Gemini** (`gemini-2.5-flash`).
+- **Formato:** Salida estructurada con renderizado **LaTeX** para fórmulas matemáticas precisas.
+
+---
+
+## 🛠 Stack Tecnológico
+
+- **Lenguaje:** Python 3.8+
+- **Backend Framework:** Flask
+- **Base de Datos:** SQL Server 2022 (Almacenamiento de vectores `VARBINARY`)
+- **Inteligencia Artificial:**
+  - `sentence-transformers` (Embeddings)
+  - `scikit-learn` (Preprocesamiento y métricas)
+  - `lightgbm` (Clasificación IA)
+  - `transformers` (Hugging Face - Inferencia local)
+  - `google-genai` (API Cloud)
+  - `nltk` (Procesamiento de lenguaje natural)
+
+---
 
 ---
 ## 🚀 Cómo Poner en Marcha el Proyecto
