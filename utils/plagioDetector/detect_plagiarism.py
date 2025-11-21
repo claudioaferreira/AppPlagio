@@ -27,6 +27,8 @@ PLAGIARISM_RISK_THRESHOLDS = {
     'BAJO': 0.40,
 }
 
+
+
 def determine_risk_level(score):
     """Clasifica el puntaje de similitud en un nivel de riesgo."""
     # En lugar de colores CSS, devolvemos nombres de clases CSS
@@ -48,7 +50,7 @@ def find_plagiarism_with_sql_server(document_content):
     # Ahora usamos 'document_content' directamente para la codificación.
     new_embedding = model.encode(document_content)
 
-    print(f"DEBUG: Dimensión del nuevo Embedding: {new_embedding.shape}") 
+    print(f"DEBUG: Dimensión del nuevo Embedding Modelo 1: MPNet (Global): {new_embedding.shape}") 
 
     # Connect to the database and get all embeddings
     with pyodbc.connect(CNXN_STR) as cnxn:
@@ -63,7 +65,7 @@ def find_plagiarism_with_sql_server(document_content):
             # Convert the VARBINARY data back to a NumPy array
             embedding_np = np.frombuffer(row.Embedding, dtype=np.float32) 
             if not db_embeddings: 
-                 print(f"DEBUG: Dimensión del primer Embedding recuperado: {embedding_np.shape}")
+                 print(f"DEBUG: Dimensión del primer Embedding recuperado Modelo 1: MPNet (Global): {embedding_np.shape}")
             db_embeddings.append(embedding_np)
 
     # Check for empty database
@@ -82,7 +84,7 @@ def find_plagiarism_with_sql_server(document_content):
 
    # Calcular la máxima similitud
     max_similarity = np.max(similarities) if similarities.size > 0 else 0.0
-    print(f"DEBUG: Maxima Similitud Encontrada: {max_similarity}")
+    print(f"DEBUG: Maxima Similitud Encontrada Modelo 1: MPNet (Global): {max_similarity}")
 
     # Determinar el nivel de riesgo
     risk_level, risk_color = determine_risk_level(max_similarity)
@@ -90,11 +92,17 @@ def find_plagiarism_with_sql_server(document_content):
 
     results = []
     for i, score in enumerate(similarities):
-        if score > 0.4:  # Threshold for plagiarism detection
-            results.append({
-                'document_id': db_ids[i],
-                'similarity_score': score
-            })
+
+        # Inicializamos siempre la variable para evitar errores
+        matched_sentences = []
+
+    if score > 0.4:
+        results.append({
+            'document_id': db_ids[i],
+            'similarity_score': score,
+            'matched_sentences': matched_sentences,
+            'match_count': len(matched_sentences)
+        })
 
     results.sort(key=lambda x: x['similarity_score'], reverse=True)
     

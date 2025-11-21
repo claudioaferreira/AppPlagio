@@ -166,10 +166,10 @@ Parafraseo:"""
 
 # Función para parafrasear texto
 def parafreasearTexto(original_text: str, tone: str = "estandar") -> str:
-    #print(f"TONO SELECCIONADO: {tone}")
-    #print(f"Iniciando parafraseo para: \"{original_text[:50]}...\"")
+    print(f"TONO SELECCIONADO: {tone}")
+    print(f"Iniciando parafraseo para: \"{original_text[:50]}...\"")
     selected_template = PROMPT_TEMPLATES.get(tone, PROMPT_TEMPLATES["default"])
-    #print(f"Iniciando parafraseo (Tono: {tone}) para: \"{original_text[:50]}...\"")
+    print(f"Iniciando parafraseo (Tono: {tone}) para: \"{original_text[:50]}...\"")
 
     try:
         # --- 3. Crear el Prompt (La Instrucción) ---
@@ -177,9 +177,10 @@ def parafreasearTexto(original_text: str, tone: str = "estandar") -> str:
 
         # --- 4. Generar el Texto ---
         # Tokenizamos
-        inputs = tokenizer(prompt, return_tensors="pt").to(device)
+        inputs = tokenizer(prompt, return_tensors="pt")
+        inputs = {k: v.to(device) for k, v in inputs.items()}
 
-       # print("Generando texto...")
+        print("Generando texto...")
         # Generamos la salida
         outputs = model.generate(
             **inputs,
@@ -204,7 +205,7 @@ def parafreasearTexto(original_text: str, tone: str = "estandar") -> str:
             # Fallback por si "Parafraseo:" no aparece
             texto_parafraseado = resultado_completo
         
-        #print(f"Parafraseo generado: \"{texto_parafraseado[:50]}...\"")
+        print(f"Parafraseo generado: \"{texto_parafraseado[:50]}...\"")
         return texto_parafraseado
 
     except IndexError:

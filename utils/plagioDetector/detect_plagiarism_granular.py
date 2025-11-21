@@ -69,6 +69,7 @@ def find_plagiarism_with_roberta_segmentation(document_content):
     
     # 2. Generar embeddings para cada frase del nuevo documento
     new_embeddings = model.encode(sentences)
+    print(f"DEBUG: Dimensión del nuevo Embedding Modelo 2: MPNet (Granularidad): {new_embeddings.shape}") 
 
     # 3. Conexión a la base de datos y carga de embeddings
     with pyodbc.connect(CNXN_STR) as cnxn:
@@ -83,13 +84,17 @@ def find_plagiarism_with_roberta_segmentation(document_content):
             db_embeddings.append(embedding_np)
 
     if not db_embeddings:
+        
         return {
             'max_similarity': 0.0,
             'match_count': 0,
             'risk_level': 'SIN REFERENCIAS',
             'risk_color': 'gray',
             'detailed_results': []
+            
         }
+    print(f"DEBUG: Dimensión del primer Embedding recuperado Modelo 2: MPNet (Granularidad): {embedding_np.shape}")  
+
 
     # 4. Calcular la similitud de TODAS las frases (new_embeddings) contra TODOS los documentos (db_embeddings)
     similarity_matrix = cosine_similarity(new_embeddings, db_embeddings)
@@ -118,8 +123,10 @@ def find_plagiarism_with_roberta_segmentation(document_content):
             detailed_results[doc_id] = {
                 'document_id': doc_id,
                 'similarity_score': max_score_for_doc,
-                'matched_sentence': sentences[sentence_idx] 
+                'matched_sentence': sentences[sentence_idx],
+                'match_count': 1
             }
+    print(f"DEBUG: Maxima Similitud Encontrada Modelo 2: MPNet (Granularidad): {max_similarity}")
 
     results_list = list(detailed_results.values())
     results_list.sort(key=lambda x: x['similarity_score'], reverse=True)

@@ -20,6 +20,8 @@
 # Es un modelo más completo, robusto y difícil de engañar.
 # Ideal como versión avanzada/pro del detector.
 
+#Utiliza el conjunto de desarrollo (DEV_FILE) para detener automáticamente el entrenamiento en el punto óptimo, lo que se traduce en una mayor precisión y previene el sobreajuste.
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
@@ -161,16 +163,24 @@ def train_and_save_model():
         stop_words=final_stop_words_list # Lista limpia y consistente
     )
 
+    dev_df = load_data(DEV_FILE)
+
     X_tfidf = vectorizer.fit_transform(train_df['text']) # Renombrado a X_tfidf
     y_train = train_df['label']
+
+    # 1b. Transformación TF-IDF para DEV (solo transformación)
+    X_tfidf_dev = vectorizer.transform(dev_df['text']) # 👈 NUEVA LÍNEA
+    y_dev = dev_df['label'] # 👈 NUEVA LÍNEA
 
      # --- PASO 2: Extracción de Características Estilométricas ---
     stylometric_extractor = StylometricFeatureExtractor()
     X_stylometric = stylometric_extractor.fit_transform(train_df['text'])
+    X_stylometric_dev = stylometric_extractor.transform(dev_df['text'])
 
       # --- PASO 3: Combinar las dos matrices ---
     # Usar hstack para concatenar la matriz dispersa TF-IDF con la matriz densa estilométrica
     X_train_combined = hstack([X_tfidf, X_stylometric])
+    X_dev_combined = hstack([X_tfidf_dev, X_stylometric_dev])
 
     print(f"INFO: Matriz de características final creada con {X_train_combined.shape[1]} columnas.") # Serán 200,007 columnas
     
@@ -190,9 +200,9 @@ def train_and_save_model():
     # --- CONFIGURACIÓN DE VELOCIDAD EXTREMA PARA LA MATRIZ DE 200,007 COLUMNAS ---
     # ----------------------------------------------------------------------------------
 
-        n_estimators=300,            # OPTIMIZACIÓN DE VELOCIDAD: Reducción drástica del número de árboles (de 750 a 300) para acelerar el entrenamiento.
-        learning_rate=0.15,          # COMPENSACIÓN DE VELOCIDAD: Aumenta el paso de aprendizaje para que el modelo converja más rápido con menos árboles.
-        num_leaves=31,               # OPTIMIZACIÓN DE VELOCIDAD: Simplifica la complejidad máxima de cada árbol, reduciendo el tiempo de cálculo.
+        n_estimators=2000,           # OPTIMIZACIÓN DE VELOCIDAD: Aumento drástica del número de árboles (de 1000 a 2000) para mejorar la precisión.
+        learning_rate=0.05,          # COMPENSACIÓN DE VELOCIDAD: Aumenta el paso de aprendizaje para que el modelo converja más rápido con menos árboles.
+        num_leaves=90,               # OPTIMIZACIÓN DE VELOCIDAD: Aumenta la complejidad máxima de cada árbol. Permite capturar señales más sutiles en las 200,007 características.
         min_child_samples=30,        # OPTIMIZACIÓN DE ESTABILIDAD: Asegura que las reglas de división se basen en muestras más grandes, previniendo el sobreajuste en features dispersas (TF-IDF).
         class_weight='balanced',     # CLAVE PARA EL F1-SCORE: Fuerza al modelo a prestar mayor atención a las clases minoritarias, como la "Escrito por máquina, luego editado por humanos".
             
@@ -202,8 +212,14 @@ def train_and_save_model():
         verbose=-1                  
     )
     
-    # Entrenar con la matriz combinada
-    classifier.fit(X_train_combined, y_train) 
+    # Entrenar con la matriz combinada, usando Early Stopping
+    classifier.fit(
+    X_train_combined,
+    y_train,
+    #eval_set=[(X_dev_combined, y_dev)], #  Conjunto de validación
+    #eval_metric='multi_logloss',
+    #callbacks=[lgb.early_stopping(stopping_rounds=50, verbose=True)] # Parar si no mejora en 50 iteraciones
+)
     
     # Guarda el vectorizador, el extractor y el modelo para su uso futuro
     joblib.dump(classifier, MODEL_PATH)
@@ -299,7 +315,7 @@ def evaluate_model(labels_list):
 
 # Entrenar el modelo al iniciar el script por primera vez si no existe
 if __name__ == '__main__':
-    if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH) or not os.path.exists(STYLOMETRIC_EXTRACTOR_PATH):
+    #if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH) or not os.path.exists(STYLOMETRIC_EXTRACTOR_PATH):
         train_and_save_model()
 
         evaluate_model(LABELS)

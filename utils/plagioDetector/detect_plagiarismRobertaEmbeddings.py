@@ -62,7 +62,7 @@ def find_plagiarism_with_roberta_embeddings(document_content):
     
     # 2. Generar embeddings para cada frase del nuevo documento
     new_embeddings = model.encode(sentences)
-
+    print(f"DEBUG: Dimensión del nuevo Embedding Modelo 3: XLM-RoBERTa: {new_embeddings.shape}") 
     # 3. Conexión a la base de datos y carga de embeddings
     with pyodbc.connect(CNXN_STR) as cnxn:
         cursor = cnxn.cursor()
@@ -84,6 +84,7 @@ def find_plagiarism_with_roberta_embeddings(document_content):
             'risk_color': 'gray',
             'detailed_results': []
         }
+    print(f"DEBUG: Dimensión del primer Embedding recuperado Modelo 3: XLM-RoBERTa: {embedding_np.shape}") 
 
     # 4. Calcular la similitud de TODAS las frases (new_embeddings) contra TODOS los documentos (db_embeddings)
     similarity_matrix = cosine_similarity(new_embeddings, db_embeddings)
@@ -107,9 +108,10 @@ def find_plagiarism_with_roberta_embeddings(document_content):
             detailed_results[doc_id] = {
                 'document_id': doc_id,
                 'similarity_score': max_score_for_doc,
-                'matched_sentence': sentences[sentence_idx] 
+                'matched_sentence': sentences[sentence_idx],
+                'match_count': 1
             }
-
+    print(f"DEBUG: Maxima Similitud Encontrada Modelo 3: XLM-RoBERTa: {max_similarity}")
     results_list = list(detailed_results.values())
     results_list.sort(key=lambda x: x['similarity_score'], reverse=True)
     

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,10 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -26,6 +28,7 @@
         }
     </script>
 </head>
+
 <body class="bg-gray-50">
 
     <nav class="bg-white shadow-md py-4">
@@ -36,29 +39,35 @@
                 </div>
                 <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
             </a>
-            <div class="flex items-center gap-4"> 
-              <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Detector de IA
-                  </a>
-                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Detector de Plagio
-                  </a>
-                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Parafraseado
-                  </a>
-                   </a>
-                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Math Solve
-                  </a>
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}"
+                    class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                    Detector de IA
+                </a>
+                <a href="{{ url_for('plagio_bp.plagio_page') }}"
+                    class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                    Detector de Plagio
+                </a>
+                <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}"
+                    class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                    Parafraseado
+                </a>
+                </a>
+                <a href="{{ url_for('AiTest_bp.ai_test_page') }}"
+                    class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
+                    Math Solve
+                </a>
                 {% if 'user_id' in session %}
-                    <a href="{{ url_for('auth_bp.logout') }}" class="bg-transparent hover:bg-gray-100 text-dark font-medium py-2 px-6 rounded-lg transition duration-300">
-                        Hola, {{ session.username }} (Cerrar Sesión)
-                    </a>
+                <a href="{{ url_for('auth_bp.logout') }}"
+                    class="bg-transparent hover:bg-gray-100 text-dark font-medium py-2 px-6 rounded-lg transition duration-300">
+                    Hola, {{ session.username }} (Cerrar Sesión)
+                </a>
 
                 {% else %}
-                    <a href="{{ url_for('auth_bp.login') }}" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
-                        Iniciar Sesión
-                    </a>
+                <a href="{{ url_for('auth_bp.login') }}"
+                    class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition duration-300">
+                    Iniciar Sesión
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -75,27 +84,44 @@
                     </p>
                 </div>
 
-                <form id="plagiarismForm" action="{{ url_for('plagio_bp.upload_file') }}" method="post" enctype="multipart/form-data">
-                    
-                    <label for="documento" class="flex flex-col items-center justify-center w-full h-56 border-2 border-primary border-dashed rounded-lg cursor-pointer bg-light hover:bg-gray-100 transition">
+                <form id="plagiarismForm" action="{{ url_for('plagio_bp.upload_file') }}" method="post"
+                    enctype="multipart/form-data">
+
+                    <label for="documento"
+                        class="flex flex-col items-center justify-center w-full h-56 border-2 border-primary border-dashed rounded-lg cursor-pointer bg-light hover:bg-gray-100 transition">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
                             <i class="fas fa-file-import text-primary text-4xl mb-4"></i>
-                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
+                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir</span>
+                                o arrastra y suelta</p>
                             <p class="text-xs text-gray-500">Archivos .txt, .pdf, .docx</p>
                             <p id="file-name" class="text-sm text-accent font-medium mt-2"></p>
                         </div>
                         <input type="file" id="documento" name="documento" required class="hidden" />
                     </label>
 
-                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-lg transition duration-300 mt-6 text-lg">
+                    <!-- Selector de modo de análisis -->
+                    <div class="mt-6">
+                        <label class="font-semibold text-gray-700">Modo de análisis:</label>
+                        <select name="analysis_mode" class="w-full mt-2 border border-gray-300 p-3 rounded-lg 
+                   focus:ring-primary focus:border-primary transition">
+                            <option value="all">Análisis Completo (Recomendado)</option>
+                            <option value="global">Modelo 1 – Global (Documento Completo)</option>
+                            <option value="granular_mpnet">Modelo 2 – Parafráfrasis (Granular)</option>
+                            <option value="granular_roberta">Modelo 3 – Translingüe</option>
+                        </select>
+                    </div>
+
+
+                    <button type="submit"
+                        class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-lg transition duration-300 mt-6 text-lg">
                         <i class="fas fa-shield-alt mr-2"></i> Analizar Plagio
                     </button>
                 </form>
 
             </div>
-            
+
             <div class="text-center mt-8">
-                 <a href="{{ url_for('home') }}" class="text-gray-600 hover:text-primary transition">
+                <a href="{{ url_for('home') }}" class="text-gray-600 hover:text-primary transition">
                     <i class="fas fa-arrow-left mr-2"></i> Volver a la página principal
                 </a>
             </div>
@@ -103,7 +129,7 @@
         </div>
     </section>
 
-    <footer class="bg-dark text-white py-12 mt-20"> 
+    <footer class="bg-dark text-white py-12 mt-20">
         <div class="container mx-auto px-4">
             <div class="text-center border-t border-gray-700 pt-8">
                 <p class="text-gray-400">&copy; 2025 DECOPY AI. Todos los derechos reservados.</p>
@@ -111,7 +137,8 @@
         </div>
     </footer>
 
-    <div id="loading-overlay" class="fixed top-0 left-0 w-full h-full bg-dark/80 z-50 flex-col justify-center items-center hidden">
+    <div id="loading-overlay"
+        class="fixed top-0 left-0 w-full h-full bg-dark/80 z-50 flex-col justify-center items-center hidden">
         <div class="spinner"></div>
         <div class="loading-message text-white text-xl mt-4 font-medium">
             Procesando documento y buscando coincidencias...
@@ -119,14 +146,14 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Script idéntico al de ai_detector.html, solo cambia el ID del formulario
             const form = document.getElementById('plagiarismForm');
             const loadingOverlay = document.getElementById('loading-overlay');
             const fileInput = document.getElementById('documento');
             const fileNameDisplay = document.getElementById('file-name');
 
-            fileInput.addEventListener('change', function() {
+            fileInput.addEventListener('change', function () {
                 if (fileInput.files.length > 0) {
                     fileNameDisplay.textContent = fileInput.files[0].name;
                 } else {
@@ -134,7 +161,7 @@
                 }
             });
 
-            form.addEventListener('submit', function(event) {
+            form.addEventListener('submit', function (event) {
                 if (fileInput.files.length > 0) {
                     loadingOverlay.classList.remove('hidden');
                     loadingOverlay.classList.add('flex');
@@ -144,4 +171,5 @@
     </script>
 
 </body>
+
 </html>
