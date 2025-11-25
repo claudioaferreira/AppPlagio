@@ -1,5 +1,5 @@
 # Modelo avanzado: TF-IDF + Ingeniería de Características Estilométricas (FE) + LightGBM
-
+# El modelo más avanzado para la detección de IA en textos.
 # ➤ Qué hace:
 # Este script añade información adicional que describe cómo escribe la persona/modelo:
 # TF-IDF (200k features)
@@ -41,8 +41,7 @@ import lightgbm as lgb
 # Define las rutas de los archivos del dataset
 TRAIN_FILE = os.path.join('pan-25-ai-detection', 'train.jsonl')
 DEV_FILE = os.path.join('pan-25-ai-detection', 'dev.jsonl')
-# 🌟 RUTAS RENOMBRADAS PARA INGENIERÍA DE CARACTERÍSTICAS (FE) 🌟
-# El modelo más avanzado
+
 MODEL_PATH = 'lgbm_classifier_model_fe.pkl' 
 # El vectorizador TF-IDF usado con el modelo FE
 VECTORIZER_PATH = 'tfidf_lgbm_vectorizer_fe.pkl' 
@@ -185,7 +184,7 @@ def train_and_save_model():
     print(f"INFO: Matriz de características final creada con {X_train_combined.shape[1]} columnas.") # Serán 200,007 columnas
     
     
-    # 🌟 ¡NUEVO CLASIFICADOR! LightGBM (LGBMClassifier)
+    # ¡NUEVO CLASIFICADOR! LightGBM (LGBMClassifier)
     print("INFO: Entrenando el modelo LightGBM...")
     
     classifier = lgb.LGBMClassifier(
@@ -200,7 +199,7 @@ def train_and_save_model():
     # --- CONFIGURACIÓN DE VELOCIDAD EXTREMA PARA LA MATRIZ DE 200,007 COLUMNAS ---
     # ----------------------------------------------------------------------------------
 
-        n_estimators=2000,           # OPTIMIZACIÓN DE VELOCIDAD: Aumento drástica del número de árboles (de 1000 a 2000) para mejorar la precisión.
+        n_estimators=1800,           # OPTIMIZACIÓN DE VELOCIDAD: Aumento drástica del número de árboles (de 1000 a 1800) para mejorar la precisión.
         learning_rate=0.05,          # COMPENSACIÓN DE VELOCIDAD: Aumenta el paso de aprendizaje para que el modelo converja más rápido con menos árboles.
         num_leaves=90,               # OPTIMIZACIÓN DE VELOCIDAD: Aumenta la complejidad máxima de cada árbol. Permite capturar señales más sutiles en las 200,007 características.
         min_child_samples=30,        # OPTIMIZACIÓN DE ESTABILIDAD: Asegura que las reglas de división se basen en muestras más grandes, previniendo el sobreajuste en features dispersas (TF-IDF).
@@ -224,7 +223,7 @@ def train_and_save_model():
     # Guarda el vectorizador, el extractor y el modelo para su uso futuro
     joblib.dump(classifier, MODEL_PATH)
     joblib.dump(vectorizer, VECTORIZER_PATH)
-    joblib.dump(stylometric_extractor, STYLOMETRIC_EXTRACTOR_PATH) # 🌟 NUEVO OBJETO GUARDADO
+    joblib.dump(stylometric_extractor, STYLOMETRIC_EXTRACTOR_PATH) 
     
     print("Modelo y vectorizador guardados con éxito.")
 
@@ -315,7 +314,7 @@ def evaluate_model(labels_list):
 
 # Entrenar el modelo al iniciar el script por primera vez si no existe
 if __name__ == '__main__':
-    #if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH) or not os.path.exists(STYLOMETRIC_EXTRACTOR_PATH):
+    if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH) or not os.path.exists(STYLOMETRIC_EXTRACTOR_PATH):
         train_and_save_model()
 
         evaluate_model(LABELS)

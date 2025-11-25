@@ -45,7 +45,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def home():
-    """Muestra la página principal (landing page)."""
     return render_template('index.html')
 
 # Registrar los Blueprints

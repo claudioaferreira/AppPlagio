@@ -1,5 +1,5 @@
 from flask import render_template, request
-from utils.parafraseador.paraphraser import paraphrase_text
+#from utils.parafraseador.paraphraser import paraphrase_text
 from utils.parafraseador.parafraseadorGranite import parafreasearTexto
 
 def get_paraphraser_page():

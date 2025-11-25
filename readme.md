@@ -144,4 +144,3 @@ python app.py
 - Si tienes errores de conexión a la base de datos, revisa que tus credenciales en generate_embeddingsSQL.py y app.py sean correctas y que el usuario sa esté habilitado.
 - Si no ves el style.css, verifica que el archivo esté en una carpeta llamada static en la raíz de tu proyecto.
 - Si el modelo de IA no se entrena, asegúrate de que los archivos .jsonl del corpus PAN 2025 estén en la carpeta correcta.
-
