@@ -3,6 +3,7 @@
 # en tareas de similitud textual para un rendimiento superior al MPNet en ciertas métricas.
 import gc 
 import pyodbc
+import torch
 import numpy as np
 import nltk
 from nltk.tokenize import sent_tokenize
@@ -31,6 +32,8 @@ def unload_roberta_model():
         del _roberta_model
         _roberta_model = None
         gc.collect() # Fuerza a Python a liberar la RAM inmediatamente
+        if torch.cuda.is_available(): # LIMPIEZA DE CACHÉ CUDA
+            torch.cuda.empty_cache()
 
 # Definición de la clasificación de riesgo basada en el umbrales de similitud
 PLAGIARISM_RISK_THRESHOLDS = {

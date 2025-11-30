@@ -2,6 +2,7 @@
 # y compara cada frase del documento nuevo contra todos los embeddings de los documentos en la base de datos SQL.
 
 import gc 
+import torch
 import pyodbc
 import numpy as np
 import nltk
@@ -31,6 +32,8 @@ def unload_mpnet_granular_model():
         del _mpnet_granular_model
         _mpnet_granular_model = None
         gc.collect() # Fuerza a Python a liberar la RAM inmediatamente
+        if torch.cuda.is_available(): # LIMPIEZA DE CACHÉ CUDA
+            torch.cuda.empty_cache()
 
 # Definición de la clasificación de riesgo basada en el umbrales de similitud
 PLAGIARISM_RISK_THRESHOLDS = {

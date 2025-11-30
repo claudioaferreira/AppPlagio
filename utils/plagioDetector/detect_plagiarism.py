@@ -10,6 +10,7 @@
 # y se genera su embedding para compararlo con los embeddings almacenados en la base de datos SQL Server.
 
 import gc
+import torch
 import pyodbc
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -37,6 +38,8 @@ def unload_mpnet_model():
         del _mpnet_model
         _mpnet_model = None
         gc.collect() # Fuerza a Python a liberar la RAM inmediatamente
+        if torch.cuda.is_available(): # LIMPIEZA DE CACHÉ CUDA
+            torch.cuda.empty_cache()
 
 # Definición de la clasificación de riesgo basada en el umbrales de similitud
 PLAGIARISM_RISK_THRESHOLDS = {
