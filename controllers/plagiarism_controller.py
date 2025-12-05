@@ -4,6 +4,7 @@ import io
 import sys
 from flask import render_template, request
 from docx import Document
+from pypdf import PdfReader
 
 # Detectores
 from utils.plagioDetector.detect_plagiarism import (
@@ -92,6 +93,25 @@ def get_plagiarism_results():
             document_content = "\n".join(p.text for p in doc.paragraphs)
         except Exception as e:
             print(f"Error procesando DOCX: {e}", file=sys.stderr)
+            err = build_empty_results("ERROR ARCHIVO")
+            return render_template(
+                "detectorPlagio/plagio_results.html",
+                model1_results=err,
+                model2_results=err,
+                model3_results=err,
+                analysis_mode="none"
+            )
+
+    elif file_ext == "pdf":
+        try:
+            reader = PdfReader(file_stream)
+            document_content = ""
+            for page in reader.pages:
+                text = page.extract_text()
+                if text:
+                    document_content += text + "\n"
+        except Exception as e:
+            print(f"Error procesando PDF: {e}", file=sys.stderr)
             err = build_empty_results("ERROR ARCHIVO")
             return render_template(
                 "detectorPlagio/plagio_results.html",

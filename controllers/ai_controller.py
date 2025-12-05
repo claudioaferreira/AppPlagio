@@ -1,6 +1,7 @@
 import io
 from flask import render_template, request
 from docx import Document
+from pypdf import PdfReader
 
 # ================================
 #  MODELO 1 — LightGBM TF-IDF
@@ -47,6 +48,16 @@ def get_ai_results():
     except Exception as e:
       return render_template('detectorContenidoIA/ai_results.html', result=f"Error al procesar el archivo DOCX: {e}")
 
+  elif file_ext == 'pdf':
+    try:
+      reader = PdfReader(file_stream)
+      for page in reader.pages:
+        text = page.extract_text()
+        if text:
+          document_content += text + "\n"
+    except Exception as e:
+      return render_template('detectorContenidoIA/ai_results.html', result=f"Error al procesar el archivo PDF: {e}")
+
   else:
     return render_template('detectorContenidoIA/ai_results.html', result="Formato de archivo no soportado.")
 
@@ -60,7 +71,7 @@ def get_ai_results():
   # prediction_tfidf es un diccionario: {"label": "...", "ai_score": ...}
   prediction_tfidf = predict_tfidf_lgbm(document_content) 
   report_tfidf, accuracy_tfidf = evaluate_tfidf_lgbm(LABELS_TFIDF)
-  # Renombrar la estadística a 'stats' para que coincida con la plantilla HTML
+
   stats = get_stats_tfidf_lgbm(document_content) 
 
   # -----------------------------------------------
