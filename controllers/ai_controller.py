@@ -25,7 +25,7 @@ def get_ai_results():
 
   # Validación del archivo
   if 'documento' not in request.files or request.files['documento'].filename == '':
-    return render_template('ai_results.html', result="No se seleccionó ningún archivo.")
+    return render_template('detectorContenidoIA/ai_results.html', result="No se seleccionó ningún archivo.")
 
   file = request.files['documento']
   file_stream = io.BytesIO(file.read())
@@ -45,10 +45,10 @@ def get_ai_results():
       for para in doc.paragraphs:
         document_content += para.text + "\n"
     except Exception as e:
-      return render_template('ai_results.html', result=f"Error al procesar el archivo DOCX: {e}")
+      return render_template('detectorContenidoIA/ai_results.html', result=f"Error al procesar el archivo DOCX: {e}")
 
   else:
-    return render_template('ai_results.html', result="Formato de archivo no soportado.")
+    return render_template('detectorContenidoIA/ai_results.html', result="Formato de archivo no soportado.")
 
   # ====================================================================
   #         EJECUCIÓN DE LOS MODELOS DE IA

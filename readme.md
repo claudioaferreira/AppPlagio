@@ -1,11 +1,5 @@
 # 🛡️ AppPlagio: Suite de Inteligencia Artificial para Análisis de Texto
 
-**AppPlagio** es una plataforma web avanzada diseñada para la validación de originalidad, análisis forense de textos y asistencia en redacción mediante Inteligencia Artificial.
-
-El sistema integra múltiples modelos de **Machine Learning** y **Deep Learning** para ofrecer cuatro módulos principales: detección de plagio semántico, clasificación de texto humano vs. IA, reescritura estilística y resolución matemática paso a paso.
-
-## 🚀 Funcionalidades Principales
-
 ### 1. Detector de Plagio Semántico (Enfoque Granular)
 A diferencia de los detectores tradicionales que buscan coincidencias exactas, este módulo entiende el significado del texto.
 - **Tecnología:** Utiliza modelos de embeddings (`stsb-xlm-r-multilingual` y `paraphrase-multilingual-mpnet-base-v2`) para transformar frases en vectores.
@@ -17,6 +11,7 @@ Clasifica si un texto fue escrito por un humano o por modelos de lenguaje (ChatG
 - **Modelo:** **LightGBM** (Light Gradient Boosting Machine) optimizado para alta precisión.
 - **Análisis:** Utiliza **TF-IDF** con n-gramas (1-3) para analizar patrones lingüísticos y secuencias de palabras, generando un "AI Score" de probabilidad.
 - **Clases:** Identifica desde "Completamente humano" hasta "Texto profundamente mezclado" o "Editado por máquina".
+
 
 ### 3. Parafraseador Multi-Tono (GenAI)
 Reescritura inteligente de textos manteniendo el significado original pero cambiando el estilo.
