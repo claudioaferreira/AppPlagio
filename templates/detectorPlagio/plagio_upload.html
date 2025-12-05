@@ -137,38 +137,271 @@
         </div>
     </footer>
 
-    <div id="loading-overlay"
-        class="fixed top-0 left-0 w-full h-full bg-dark/80 z-50 flex-col justify-center items-center hidden">
-        <div class="spinner"></div>
-        <div class="loading-message text-white text-xl mt-4 font-medium">
-            Procesando documento y buscando coincidencias...
+    <div id="process-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/90 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+    
+    <div id="process-card" class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 mx-4">
+        
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <div>
+                <h3 class="text-lg font-bold text-dark" id="process-title">Iniciando motor...</h3>
+                <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Decopy AI Engine</p>
+            </div>
+            <div class="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <i class="fas fa-microchip text-primary text-xl animate-pulse"></i>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="mb-6">
+                <div class="flex justify-between mb-2 text-sm">
+                    <span id="progress-text" class="text-gray-600 font-medium">Preparando entorno...</span>
+                    <span id="progress-percent" class="text-primary font-bold">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="steps-container" class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                </div>
+        </div>
+
+        <div class="bg-gray-50 px-6 py-3 text-xs text-center text-gray-400 border-t border-gray-100">
+            <i class="fas fa-lock mr-1"></i> Procesamiento seguro y encriptado
         </div>
     </div>
+</div>
+
+<style>
+    /* Personalización del scrollbar para que se vea elegante */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Script idéntico al de ai_detector.html, solo cambia el ID del formulario
-            const form = document.getElementById('plagiarismForm');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const fileInput = document.getElementById('documento');
-            const fileNameDisplay = document.getElementById('file-name');
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('plagiarismForm');
+        const fileInput = document.getElementById('documento');
+        const fileNameDisplay = document.getElementById('file-name');
+        const modeSelect = document.querySelector('select[name="analysis_mode"]');
 
-            fileInput.addEventListener('change', function () {
-                if (fileInput.files.length > 0) {
-                    fileNameDisplay.textContent = fileInput.files[0].name;
-                } else {
-                    fileNameDisplay.textContent = '';
-                }
-            });
+        // Referencias al Overlay
+        const overlay = document.getElementById('process-overlay');
+        const processCard = document.getElementById('process-card');
+        const stepsContainer = document.getElementById('steps-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressText = document.getElementById('progress-text');
+        const processTitle = document.getElementById('process-title');
 
-            form.addEventListener('submit', function (event) {
-                if (fileInput.files.length > 0) {
-                    loadingOverlay.classList.remove('hidden');
-                    loadingOverlay.classList.add('flex');
-                }
-            });
+        // Mostrar nombre del archivo al seleccionar
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+                // Pequeño feedback visual en el label
+                this.parentElement.classList.add('border-primary', 'bg-blue-50');
+                this.parentElement.classList.remove('border-gray-300');
+            } else {
+                fileNameDisplay.textContent = '';
+                this.parentElement.classList.remove('border-primary', 'bg-blue-50');
+            }
         });
-    </script>
+
+        // DEFINICIÓN DE PASOS POR MODELO
+        // Estos son los pasos que el usuario verá según lo que seleccione
+        const SCENARIOS = {
+            'global': [
+                { title: "Subiendo documento al servidor...", duration: 2000 },
+                { title: "Extrayendo texto plano...", duration: 2000 },
+                { title: "Limpiando ruido (Stopwords & Regex)...", duration: 3000 },
+                { title: "Generando Hash del documento entero...", duration: 2000 },
+                { title: "Consultando índice global...", duration: 5000 },
+                { title: "Calculando coincidencia exacta...", duration: 3000 },
+                { title: "Generando reporte simple...", duration: 2000 }
+            ],
+            'granular_mpnet': [
+                { title: "Analizando estructura del archivo...", duration: 2000 },
+                { title: "Segmentación de oraciones (NLTK)...", duration: 4000 },
+                { title: "Cargando modelo 'all-mpnet-base-v2'...", duration: 5000 },
+                { title: "Generando embeddings vectoriales (768d)...", duration: 15000 }, // Paso lento
+                { title: "Indexando vectores en memoria...", duration: 3000 },
+                { title: "Calculando Similitud del Coseno...", duration: 10000 },
+                { title: "Detectando paráfrasis...", duration: 5000 },
+                { title: "Compilando resultados...", duration: 2000 }
+            ],
+            'granular_roberta': [
+                { title: "Iniciando motor XLM-RoBERTa...", duration: 3000 },
+                { title: "Detectando idioma del documento...", duration: 3000 },
+                { title: "Traducción y alineación vectorial...", duration: 12000 },
+                { title: "Búsqueda semántica translingüe...", duration: 15000 },
+                { title: "Verificando falsos positivos...", duration: 5000 },
+                { title: "Finalizando análisis multilingüe...", duration: 3000 }
+            ],
+            'all': [ // Escenario por defecto (más largo)
+                { title: "Inicializando pipeline completo...", duration: 2000 },
+                { title: "Ejecutando OCR y extracción de texto...", duration: 5000 },
+                { title: "Análisis Global (Fase 1/3)...", duration: 8000 },
+                { title: "Cargando Redes Neuronales (Fase 2/3)...", duration: 5000 },
+                { title: "Vectorización Semántica Profunda...", duration: 15000 },
+                { title: "Comparación contra Base de Conocimiento...", duration: 12000 },
+                { title: "Evaluación cruzada de resultados...", duration: 5000 },
+                { title: "Generando reporte detallado...", duration: 2000 }
+            ]
+        };
+
+        // Variables de control
+        let isServerDone = false;
+        let finalHtmlContent = "";
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (fileInput.files.length === 0) {
+                alert("Por favor, selecciona un documento primero.");
+                return;
+            }
+
+            // 1. Preparar UI
+            isServerDone = false;
+            finalHtmlContent = "";
+            const mode = modeSelect.value;
+            const steps = SCENARIOS[mode] || SCENARIOS['all']; // Cargar pasos según selección
+            
+            processTitle.textContent = getTitleForMode(mode);
+            
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            // Hack para permitir transición de opacidad
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                processCard.classList.remove('scale-95');
+                processCard.classList.add('scale-100');
+            }, 10);
+
+            const formData = new FormData(form);
+
+            // 2. LANZAR PETICIÓN AL SERVIDOR (Fetch en segundo plano)
+            const serverRequest = fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(async response => {
+                if (response.ok) {
+                    finalHtmlContent = await response.text();
+                    isServerDone = true; // ¡SEÑAL DE TERMINADO!
+                } else {
+                    throw new Error("Error en el servidor");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Ocurrió un error al procesar el archivo.");
+                location.reload();
+            });
+
+            // 3. EJECUTAR ANIMACIÓN DE PASOS (Espera visual)
+            await runProcessMonitor(steps);
+
+            // 4. MOSTRAR RESULTADO FINAL
+            if (isServerDone && finalHtmlContent) {
+                document.open();
+                document.write(finalHtmlContent);
+                document.close();
+            }
+        });
+
+        // Función auxiliar para títulos bonitos
+        function getTitleForMode(mode) {
+            if (mode === 'global') return 'Análisis Rápido Global';
+            if (mode === 'granular_mpnet') return 'Análisis Semántico (MPNet)';
+            if (mode === 'granular_roberta') return 'Análisis Translingüe (RoBERTa)';
+            return 'Análisis Completo de Plagio';
+        }
+
+        // LÓGICA DEL MONITOR DE PROCESO
+        async function runProcessMonitor(steps) {
+            stepsContainer.innerHTML = '';
+            
+            // Calcular duración total teórica
+            let totalDuration = steps.reduce((acc, step) => acc + step.duration, 0);
+            let currentTotalProgress = 0;
+
+            // Renderizar la lista de pasos (inactivos al principio)
+            steps.forEach((step, index) => {
+                const stepHtml = `
+                    <div id="step-${index}" class="step-item flex items-center p-2 rounded-lg border border-transparent opacity-40 transition-all duration-300">
+                        <div id="icon-${index}" class="flex-shrink-0 w-6 h-6 flex items-center justify-center mr-3">
+                            <i class="far fa-circle text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-600">${step.title}</span>
+                    </div>
+                `;
+                stepsContainer.insertAdjacentHTML('beforeend', stepHtml);
+            });
+
+            // Bucle de ejecución de pasos
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                const stepEl = document.getElementById(`step-${i}`);
+                const iconEl = document.getElementById(`icon-${i}`);
+
+                // Activar paso visualmente
+                stepEl.classList.remove('opacity-40', 'border-transparent');
+                stepEl.classList.add('bg-blue-50', 'border-blue-100', 'shadow-sm', 'pl-4'); // pl-4 para efecto de movimiento
+                stepEl.querySelector('span').classList.add('text-primary', 'font-bold');
+                iconEl.innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i>`;
+                
+                // Auto scroll para mantener el paso actual visible
+                if (i > 1) {
+                    stepsContainer.scrollTop = (i - 1) * 40; 
+                }
+
+                progressText.textContent = step.title;
+
+                // Lógica de tiempo inteligente
+                // Si el servidor ya acabó, el paso dura 50ms. Si no, dura lo definido.
+                let stepDuration = isServerDone ? 50 : step.duration;
+                let intervalTime = isServerDone ? 10 : 100; // Fluidez de la barra
+
+                const cycles = stepDuration / intervalTime;
+
+                for (let t = 0; t < cycles; t++) {
+                    // Si el servidor termina A MITAD de un paso largo, salimos del bucle interno
+                    // para acelerar inmediatamente al siguiente paso.
+                    if (isServerDone && intervalTime === 100) break;
+
+                    await new Promise(r => setTimeout(r, intervalTime));
+
+                    // Actualizar barra de progreso (Solo si no hemos acabado "de golpe")
+                    if (!isServerDone) {
+                        currentTotalProgress += intervalTime;
+                        // Topeamos al 95% para que no llegue a 100% antes de tiempo
+                        const percent = Math.min(Math.round((currentTotalProgress / totalDuration) * 100), 95);
+                        updateProgress(percent);
+                    }
+                }
+
+                // Marcar paso como completado
+                stepEl.classList.remove('bg-blue-50', 'border-blue-100', 'shadow-sm', 'pl-4');
+                stepEl.classList.add('opacity-60');
+                stepEl.querySelector('span').classList.remove('text-primary', 'font-bold');
+                iconEl.innerHTML = `<i class="fas fa-check-circle text-green-500"></i>`;
+            }
+
+            // Finalización forzada
+            updateProgress(100);
+            progressText.textContent = "¡Análisis completado!";
+            await new Promise(r => setTimeout(r, 500)); // Pequeña pausa para ver el 100%
+        }
+
+        function updateProgress(percent) {
+            progressBar.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+        }
+    });
+</script>
 
 </body>
 
