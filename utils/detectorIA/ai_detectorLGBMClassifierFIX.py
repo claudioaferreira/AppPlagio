@@ -1,17 +1,19 @@
-# Modelo estándar basado únicamente en TF-IDF + LightGBM
+# Modelo estandar basado unicamente en TF-IDF + LightGBM
 
-# ➤ Este script usa un pipeline clásico:
+# ➤ Este script usa un pipeline clasico:
 # TF-IDF (1–3 n-gramas)
-# Entrena LightGBM como clasificador multicategoría
-# No usa inforación estilométrica extra
-# Usa parámetros optimizados para F1-score
-# Produce no solo la categoría, sino un puntaje IA (IA-score) basado en pesos
-# ➤ Explicación técnica resumida:
-# El modelo se basa exclusivamente en la representación vectorial TF-IDF.
+# Entrena LightGBM como clasificador multicategoria
+# No usa inforacion estilométrica extra
+# Usa parametros optimizados para F1-score
+# Produce no solo la categoria, sino un puntaje IA (IA-score) basado en pesos
+# ➤ Explicacion técnica resumida:
+# El modelo se basa exclusivamente en la representacion vectorial TF-IDF.
 # Todas las features provienen del texto segmentado en tokens/gramas.
-# No evalúa estilo, solo contenido.
-# Es más rápido y más simple.
-# Ideal como baseline o como versión “lite”.
+# No evalua estilo, solo contenido.
+# Es mas rapido y mas simple.
+# Ideal como baseline o como version “lite”.
+# ----------------------------------------------------
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
@@ -32,10 +34,10 @@ VECTORIZER_PATH = 'tfidf_lgbm_vectorizerFIX.pkl'
 
 LABELS = [
     "Completamente escrito por humanos",
-    "Iniciado por humanos, continuado por máquina",
-    "Escrito por humanos, pulido por máquina",
-    "Escrito por máquina, luego humanizado por máquina",
-    "Escrito por máquina, luego editado por humanos",
+    "Iniciado por humanos, continuado por maquina",
+    "Escrito por humanos, pulido por maquina",
+    "Escrito por maquina, luego humanizado por maquina",
+    "Escrito por maquina, luego editado por humanos",
     "Texto profundamente mezclado"
 ]
 
@@ -52,14 +54,14 @@ def load_data(file_path):
 
 def train_and_save_model():
     
-    """Entrena el modelo de clasificación y lo guarda en el disco."""
-    print("Iniciando el entrenamiento del modelo de detección de IA (LightGBM)...")
+    """Entrena el modelo de clasificacion y lo guarda en el disco."""
+    print("Iniciando el entrenamiento del modelo de deteccion de IA (LightGBM)...")
     
-    # --- LÓGICA DE NLTK (Verificación y Descarga) ---
+    # --- LoGICA DE NLTK (Verificacion y Descarga) ---
     try:
         # Intentar encontrar el recurso. Si falla, lanza LookupError.
         nltk.data.find('corpora/stopwords')
-    # Captura la excepción base que se lanza (LookupError)
+    # Captura la excepcion base que se lanza (LookupError)
     except LookupError: 
         print("Descargando el recurso 'stopwords' de NLTK...")
         nltk.download('stopwords')
@@ -67,7 +69,7 @@ def train_and_save_model():
     # 1. Definir las stop words originales
     local_stop_words = stopwords.words('spanish')
 
-    # 2. Preprocesar las stop words para consistencia (sin acentos, minúsculas)
+    # 2. Preprocesar las stop words para consistencia (sin acentos, minusculas)
     preprocessed_stop_words_set = set(
         unidecode.unidecode(word) for word in local_stop_words
     )
@@ -78,19 +80,19 @@ def train_and_save_model():
     # Carga los datos de entrenamiento
     train_df = load_data(TRAIN_FILE)
     
-    # Vectoriza el texto usando TF-IDF (CONFIGURACIÓN ÓPTIMA)
+    # Vectoriza el texto usando TF-IDF (CONFIGURACIoN oPTIMA)
     vectorizer = TfidfVectorizer(
         ngram_range=(1, 3),    # Trigramas para capturar patrones de IA
-        max_features=200000,   # Límite de vocabulario
+        max_features=200000,   # Limite de vocabulario
         lowercase=True, 
-        strip_accents='unicode', # Normalización de acentos
+        strip_accents='unicode', # Normalizacion de acentos
         min_df=3,              # Ignora términos muy raros
         stop_words=final_stop_words_list # Lista limpia y consistente
     )
     X_train = vectorizer.fit_transform(train_df['text'])
     y_train = train_df['label']
 
-    print(f"INFO: Matriz de características creada con {X_train.shape[1]} columnas.")
+    print(f"INFO: Matriz de caracteristicas creada con {X_train.shape[1]} columnas.")
     
     # 🌟 ¡NUEVO CLASIFICADOR! LightGBM (LGBMClassifier)
     print("INFO: Entrenando el modelo LightGBM...")
@@ -102,14 +104,14 @@ def train_and_save_model():
         random_state=42,            
         n_jobs=-1,                  
         
-        # AJUSTES DE RENDIMIENTO Y PRECISIÓN
-        n_estimators=750,           # Más potencia: Construir más árboles para afinar la decisión, lo que puede ayudar a diferenciar mejor.
-        learning_rate=0.08,          # Más precisión: Reducir un poco el paso para asegurar que los 750 árboles sean muy precisos.
-        num_leaves=50,              # Más complejidad: Permitir que los árboles modelen interacciones más complejas, clave para texto "humanizado."
-        min_child_samples=30,       # Más sensibilidad: Reducir este valor le permite al modelo crear reglas de clasificación basadas en grupos más pequeños, mejorando el recall en clases minoritarias/difíciles.
+        # AJUSTES DE RENDIMIENTO Y PRECISIoN
+        n_estimators=750,           # Mas potencia: Construir mas arboles para afinar la decision, lo que puede ayudar a diferenciar mejor.
+        learning_rate=0.08,          # Mas precision: Reducir un poco el paso para asegurar que los 750 arboles sean muy precisos.
+        num_leaves=50,              # Mas complejidad: Permitir que los arboles modelen interacciones mas complejas, clave para texto "humanizado."
+        min_child_samples=30,       # Mas sensibilidad: Reducir este valor le permite al modelo crear reglas de clasificacion basadas en grupos mas pequeños, mejorando el recall en clases minoritarias/dificiles.
         class_weight='balanced',    # Fuerza a LGBM a considerar el desbalance.
         
-        # OPTIMIZACIÓN PARA MATRICES DISPERSAS (TF-IDF)
+        # OPTIMIZACIoN PARA MATRICES DISPERSAS (TF-IDF)
         sparse_feature=True,        # Indica a LGBM que use optimizaciones para datos dispersos.
         max_bin=63,                 
         verbose=-1                  
@@ -125,7 +127,7 @@ def train_and_save_model():
 
 
 def predict_ai_content(document_content):
-    """Carga el modelo guardado y predice la categoría del documento."""
+    """Carga el modelo guardado y predice la categoria del documento."""
     if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH):
         print("El modelo no existe. Entrenando primero...")
         train_and_save_model()
@@ -140,32 +142,32 @@ def predict_ai_content(document_content):
     # 1. Obtenemos las probabilidades para TODAS las 6 clases
     probabilities = classifier.predict_proba(text_vectorized)[0]
     
-    # 2. Obtenemos la predicción principal (la clase con mayor probabilidad)
+    # 2. Obtenemos la prediccion principal (la clase con mayor probabilidad)
     prediction_index = np.argmax(probabilities)
 
     # 3. Calculamos el "Puntaje IA"
-    #    Asumimos que la clase 0 ("Completamente escrito por humanos") es la única "humana".
-    #    El resto de clases (1 a 5) implican algún nivel de IA.
+    #    Asumimos que la clase 0 ("Completamente escrito por humanos") es la unica "humana".
+    #    El resto de clases (1 a 5) implican algun nivel de IA.
     #human_score_prob = probabilities[0]
 
     # El puntaje de IA es la suma de las probabilidades del resto de clases.
     # Multiplicamos por 100 para tener el porcentaje.
     ai_score_percent = sum(prob * weight for prob, weight in zip(probabilities, IA_WEIGHTS)) * 100
 
-    # 4. Obtenemos la etiqueta de texto de la predicción principal
+    # 4. Obtenemos la etiqueta de texto de la prediccion principal
     if 0 <= prediction_index < len(LABELS):
         prediction_label = LABELS[prediction_index]
     else:
-        prediction_label = "Categoría desconocida"
+        prediction_label = "Categoria desconocida"
 
-        # 5. Devolvemos un diccionario con toda la información
+        # 5. Devolvemos un diccionario con toda la informacion
     return {
         "label": prediction_label,    # Ej: "Iniciado por humanos..."
         "ai_score": ai_score_percent  # Ej: 96.36
     }
 
 def get_text_stats(document_content):
-    """Calcula estadísticas simples del texto."""
+    """Calcula estadisticas simples del texto."""
     characters = len(document_content)
     words = len(document_content.split())
     return {
@@ -174,12 +176,12 @@ def get_text_stats(document_content):
     }
 
 def evaluate_model(labels_list):
-    """Evalúa el modelo con el conjunto de datos de desarrollo y muestra el informe. - MODELO TF-IDF + LightGBM"""
+    """Evalua el modelo con el conjunto de datos de desarrollo y muestra el informe. - MODELO TF-IDF + LightGBM"""
     if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH):
         print("Modelo no entrenado. Por favor, entrene el modelo primero.")
         return
         
-    print("Evaluando el modelo de detección de IA TF-IDF + LightGBM")
+    print("Evaluando el modelo de deteccion de IA TF-IDF + LightGBM")
     dev_df = load_data(DEV_FILE)
     
     classifier = joblib.load(MODEL_PATH)
@@ -195,7 +197,7 @@ def evaluate_model(labels_list):
     
     accuracy_value = report_dict.get('accuracy', 0.0)
 
-    print("\n--- Informe de Clasificación (Consola) ---")
+    print("\n--- Informe de Clasificacion (Consola) ---")
     print(report_string)
     print("---------------------------------")
 
