@@ -19,21 +19,31 @@ def get_roberta_model():
     """Carga el modelo XLM-RoBERTa solo si no existe en memoria."""
     global _roberta_model
     if _roberta_model is None:
-        print("Cargando modelo XLM-RoBERTa en RAM... esto puede tardar un momento.")
-        # Este es el modelo XLM-RoBERTa finetuneado
-        _roberta_model = SentenceTransformer('stsb-xlm-r-multilingual')
+        print("Cargando modelo XLM-RoBERTa... esto puede tardar un momento.")
+        # CORRECCIÓN 1: Forzamos el uso de la CPU para evitar Timeouts de CUDA
+        # Si prefieres arriesgarte con la GPU, quita ", device='cpu'"
+        _roberta_model = SentenceTransformer('stsb-xlm-r-multilingual', device='cpu')
     return _roberta_model
 
 def unload_roberta_model():
     """Libera la memoria RAM eliminando el modelo y forzando la recolección de basura."""
     global _roberta_model
-    if _roberta_model is not None:
-        print("Liberando memoria del modelo XLM-RoBERTa...")
-        del _roberta_model
-        _roberta_model = None
+    try:
+        if _roberta_model is not None:
+            print("Liberando memoria del modelo XLM-RoBERTa...")
+            del _roberta_model
+            _roberta_model = None
+            
         gc.collect() # Fuerza a Python a liberar la RAM inmediatamente
-        if torch.cuda.is_available(): # LIMPIEZA DE CACHÉ CUDA
-            torch.cuda.empty_cache()
+        
+        # CORRECCIÓN 2: Protección contra errores de CUDA al limpiar
+        if torch.cuda.is_available(): 
+            try:
+                torch.cuda.empty_cache()
+            except RuntimeError:
+                pass # Si CUDA ya falló, ignoramos el error de limpieza
+    except Exception as e:
+        print(f"Nota: Limpieza de memoria parcial ({e})")
 
 # Definición de la clasificación de riesgo basada en el umbrales de similitud
 PLAGIARISM_RISK_THRESHOLDS = {
@@ -88,7 +98,8 @@ def find_plagiarism_with_roberta_embeddings(document_content):
         model = get_roberta_model()
 
         # Generar embeddings para cada frase del nuevo documento
-        new_embeddings = model.encode(sentences)
+        # Agregamos show_progress_bar para depuración visual en consola
+        new_embeddings = model.encode(sentences, show_progress_bar=True)
         print(f"DEBUG: Dimensión del nuevo Embedding Modelo 3: XLM-RoBERTa: {new_embeddings.shape}") 
         
         # 3. Conexión a la base de datos y carga de embeddings

@@ -44,19 +44,6 @@
                 <span class="text-xl font-bold text-dark">DECOPY <span class="text-primary">AI</span></span>
             </a>
             <div class="flex items-center gap-4"> 
-               <a href="{{ url_for('ai_detector_bp.ai_detector_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Detector de IA
-                  </a>
-                  <a href="{{ url_for('plagio_bp.plagio_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Detector de Plagio
-                  </a>
-                      <a href="{{ url_for('paraphraser_bp.paraphraser_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Parafraseado
-                  </a>
-                   </a>
-                      <a href="{{ url_for('AiTest_bp.ai_test_page') }}" class="bg-transparent hover:bg-primary/10 border-2 border-primary text-primary font-medium py-2 px-6 rounded-lg transition duration-300">
-                      Math Solve
-                  </a>
 
                 {% if 'user_id' in session %}
                     <a href="{{ url_for('auth_bp.logout') }}" class="bg-transparent hover:bg-gray-100 text-dark font-medium py-2 px-6 rounded-lg transition duration-300">

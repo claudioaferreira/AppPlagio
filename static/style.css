@@ -250,3 +250,41 @@ body {
     color: #FFFFFF !important;
     font-weight: 500;
 }
+
+/* =============================================== */
+/* Dashboard Cards – Index Page */
+/* =============================================== */
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.06),
+        0 2px 4px rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 10px 18px rgba(0,0,0,0.12),
+        0 4px 8px rgba(0,0,0,0.08);
+}
+
+.drop-shadow-2xl {
+    filter: drop-shadow(0 12px 20px rgba(0,0,0,0.25));
+}
+
+.hero-section {
+    padding: 40px 0 !important; /* antes era 120px o más */
+}
+
+.hero-text h1 {
+    margin-bottom: 0;
+}
+
+.hero-text p {
+    margin-top: 0.5rem;
+}
