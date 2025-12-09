@@ -211,7 +211,16 @@
                 // (La animación ahora sabe "acelerar" si isServerDone es true)
                 await runProcessMonitor();
 
-                // C. Una vez que la animación termina (ya sea lento o rápido), mostramos el resultado
+               if (!isServerDone) {
+                    // Opcional: Avisar al usuario que se están ultimando detalles
+                    if(progressText) progressText.textContent = "Finalizando procesamiento...";
+                    
+                    // Esperamos a que el fetch termine (ya sea éxito o error)
+                    await serverPromise;
+                }
+                // --- CORRECCIÓN FIN ---
+
+                // C. Una vez que la animación termina Y el servidor tiene los datos, mostramos el resultado
                 if (isServerDone && finalHtmlContent) {
                     document.open();
                     document.write(finalHtmlContent);
