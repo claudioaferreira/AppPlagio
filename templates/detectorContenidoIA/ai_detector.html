@@ -29,9 +29,14 @@
     </script>
 
     <style>
-        .step-item { transition: all 0.5s ease; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .step-item { transition: all 0.3s ease; }
+        
+        /* Personalización del scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
         #steps-container { scroll-behavior: smooth; }
     </style>
 </head>
@@ -58,7 +63,7 @@
                 <div class="text-center">
                     <h1 class="text-3xl md:text-4xl font-bold text-dark mb-4">Detector de Contenido AI</h1>
                     <p class="text-lg text-gray-600 mb-8">
-                        Analiza un documento para determinar si fue escrito por un humano o una IA.
+                        Analiza un documento para determinar si fue escrito por un humano o una IA mediante análisis estilométrico avanzado.
                     </p>
                 </div>
 
@@ -73,7 +78,7 @@
                             <p class="text-xs text-gray-500">Archivos .txt, .pdf, .docx</p>
                             <p id="file-name" class="text-sm text-accent font-bold mt-2 text-center px-4"></p>
                         </div>
-                        <input type="file" id="documento" name="documento" class="hidden" accept=".txt,.pdf,.docx" />
+                        <input type="file" id="documento" name="documento" class="hidden" accept=".txt,.pdf,.docx" required />
                     </label>
 
                     <button type="submit"
@@ -85,37 +90,37 @@
         </div>
     </section>
 
-    <div id="process-overlay" class="fixed inset-0 bg-dark/90 z-50 hidden flex-col justify-center items-center backdrop-blur-sm transition-opacity duration-300 opacity-0">
-        
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="process-card">
+    <div id="process-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/90 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+    
+        <div id="process-card" class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 mx-4">
             
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <div>
-                    <h3 id="process-title" class="text-lg font-bold text-dark">Iniciando Motores...</h3>
-                    <p class="text-xs text-gray-500">Por favor no cierres esta ventana</p>
+                    <h3 class="text-lg font-bold text-dark" id="process-title">Analizando patrones...</h3>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Decopy AI Engine</p>
                 </div>
-                <div class="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center">
-                    <i class="fas fa-cog fa-spin text-primary"></i>
+                <div class="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-microchip text-primary text-xl animate-pulse"></i>
                 </div>
             </div>
-
-            <div class="relative h-64 bg-white">
-                <div class="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-white to-transparent z-10"></div>
-                
-                <div id="steps-container" class="h-full overflow-y-hidden px-6 py-4 flex flex-col gap-4 no-scrollbar">
+    
+            <div class="p-6">
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2 text-sm">
+                        <span id="progress-text" class="text-gray-600 font-medium">Preparando entorno...</span>
+                        <span id="progress-percent" class="text-primary font-bold">0%</span>
                     </div>
-
-                <div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent z-10"></div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+    
+                <div id="steps-container" class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                </div>
             </div>
-
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-                    <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-gray-500 font-medium">
-                    <span id="progress-text">Preparando...</span>
-                    <span id="progress-percent">0%</span>
-                </div>
+    
+            <div class="bg-gray-50 px-6 py-3 text-xs text-center text-gray-400 border-t border-gray-100">
+                <i class="fas fa-lock mr-1"></i> Análisis privado y seguro
             </div>
         </div>
     </div>
@@ -126,6 +131,7 @@
             const fileInput = document.getElementById('documento');
             const fileNameDisplay = document.getElementById('file-name');
             
+            // Elementos del Overlay
             const overlay = document.getElementById('process-overlay');
             const processCard = document.getElementById('process-card');
             const stepsContainer = document.getElementById('steps-container');
@@ -142,27 +148,31 @@
                     this.parentElement.classList.remove('border-primary');
                 } else {
                     fileNameDisplay.textContent = '';
+                    this.parentElement.classList.remove('border-accent', 'bg-purple-50');
+                    this.parentElement.classList.add('border-primary');
                 }
             });
 
-            // Variable de control global para saber si el servidor terminó
+            // 2. Definición de Pasos (Escenario Unificado)
+            // Diseñado para durar 2.5 min en total.
+            // El paso 4 (Vectorización) termina aprox. en el segundo 75 (1.25 min), 
+            // coincidiendo con el tiempo del Modelo 1.
+            const steps = [
+                { title: "Subiendo documento al servidor...", duration: 5000 },       // Cum: 5s
+                { title: "Limpieza y normalización de texto...", duration: 10000 },   // Cum: 15s
+                { title: "Análisis de estructura y sintaxis...", duration: 25000 },   // Cum: 40s
+                { title: "Generando vectores numéricos TF-IDF...", duration: 35000 }, // Cum: 75s (Aquí terminaría el Modelo 1)
+                { title: "Evaluación de complejidad semántica...", duration: 20000 },  // Cum: 95s
+                { title: "Ejecutando predicción LightGBM...", duration: 45000 },      // Cum: 140s
+                { title: "Verificando consistencia del lenguaje...", duration: 5000 },   // Cum: 145s
+                { title: "Generando reporte final...", duration: 5000 }                 // Cum: 150s (2.5 min)
+            ];
+
+            // Variable de control global
             let isServerDone = false;
             let finalHtmlContent = "";
 
-            // DEFINICIÓN DE PASOS 
-            const steps = [
-                { phase: "Fase 1/2: Modelo TF-IDF + LightGBM", title: "Cargando corpus de lenguaje...", duration: 3000 },
-                { phase: "Fase 1/2: Modelo TF-IDF + LightGBM", title: "Vectorizando texto (TF-IDF)...", duration: 10000 },
-                { phase: "Fase 1/2: Modelo TF-IDF + LightGBM", title: "Ejecutando LightGBM Base...", duration: 20000 },
-                { phase: "Fase 1/2: Modelo TF-IDF + LightGBM", title: "Validando vectores dispersos...", duration: 10000 },
-                { phase: "Fase 2/2: Feature Engineering & AI", title: "Extrayendo rasgos estilométricos...", duration: 20000 },
-                { phase: "Fase 2/2: Feature Engineering & AI", title: "Calculando perplejidad y burstiness...", duration: 30000 },
-                { phase: "Fase 2/2: Feature Engineering & AI", title: "Detectando patrones sintácticos...", duration: 20000 },
-                { phase: "Fase 2/2: Feature Engineering & AI", title: "Inferencia final de modelo híbrido...", duration: 25000 },
-                { phase: "Finalizando", title: "Generando reporte de análisis...", duration: 2000 }
-            ];
-
-            // 2. LOGICA PRINCIPAL
+            // 3. Lógica Principal
             form.addEventListener('submit', async function (event) {
                 event.preventDefault(); 
 
@@ -171,31 +181,34 @@
                     return;
                 }
 
-                // Reiniciamos variables
+                // Reiniciamos variables UI
                 isServerDone = false;
                 finalHtmlContent = "";
+                processTitle.textContent = "Analizando Documento...";
 
                 // Mostrar UI
-                overlay.classList.remove('hidden', 'opacity-0');
-                overlay.classList.add('flex', 'opacity-100');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                
+                // Animación de entrada suave
                 setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
                     processCard.classList.remove('scale-95');
                     processCard.classList.add('scale-100');
-                }, 100);
+                }, 50);
 
                 const formData = new FormData(form);
 
                 // --- PROCESO EN PARALELO INTELIGENTE ---
 
-                // A. Lanzamos la petición al servidor (SIN AWAIT para que no bloquee)
-                // Usamos .then() para manejar la respuesta cuando llegue, sin importar cuándo sea
+                // A. Lanzamos la petición al servidor (Fetch asíncrono)
                 const serverPromise = fetch('/ai-detect', {
                     method: 'POST',
                     body: formData
                 })
                 .then(async response => {
                     if (response.ok) {
-                        finalHtmlContent = await response.text(); // Guardamos el HTML
+                        finalHtmlContent = await response.text(); 
                         isServerDone = true; // ¡AVISAMOS A LA ANIMACIÓN QUE TERMINAMOS!
                     } else {
                         throw new Error("Error en el servidor");
@@ -203,24 +216,20 @@
                 })
                 .catch(error => {
                     console.error(error);
-                    alert("Ocurrió un error al procesar el archivo.");
+                    alert("Ocurrió un error al procesar el archivo. Intente nuevamente.");
                     location.reload();
                 });
 
                 // B. Lanzamos la animación y esperamos a que termine 
-                // (La animación ahora sabe "acelerar" si isServerDone es true)
-                await runProcessMonitor();
+                await runProcessMonitor(steps);
 
-               if (!isServerDone) {
-                    // Opcional: Avisar al usuario que se están ultimando detalles
+                // Si la animación terminó pero el servidor sigue (caso raro), esperamos
+                if (!isServerDone) {
                     if(progressText) progressText.textContent = "Finalizando procesamiento...";
-                    
-                    // Esperamos a que el fetch termine (ya sea éxito o error)
                     await serverPromise;
                 }
-                // --- CORRECCIÓN FIN ---
 
-                // C. Una vez que la animación termina Y el servidor tiene los datos, mostramos el resultado
+                // C. Mostrar resultado
                 if (isServerDone && finalHtmlContent) {
                     document.open();
                     document.write(finalHtmlContent);
@@ -228,92 +237,77 @@
                 }
             });
 
-            async function runProcessMonitor() {
+            // Función del monitor de procesos
+            async function runProcessMonitor(steps) {
                 stepsContainer.innerHTML = '';
                 
-                // Calcular duración total inicial para la barra de porcentaje
                 let totalDuration = steps.reduce((acc, step) => acc + step.duration, 0);
                 let currentTotalProgress = 0;
 
-                // Render inicial de los pasos
+                // Render inicial de pasos (transparente)
                 steps.forEach((step, index) => {
                     const stepHtml = `
-                        <div id="step-${index}" class="step-item flex items-center p-3 rounded-lg border border-transparent opacity-50">
+                        <div id="step-${index}" class="step-item flex items-center p-2 rounded-lg border border-transparent opacity-40 transition-all duration-300">
                             <div id="icon-${index}" class="flex-shrink-0 w-6 h-6 flex items-center justify-center mr-3">
-                                <i class="far fa-circle text-gray-300 text-xl"></i>
+                                <i class="far fa-circle text-gray-400 text-sm"></i>
                             </div>
-                            <span class="text-sm font-medium text-gray-500">${step.title}</span>
+                            <span class="text-sm font-medium text-gray-600">${step.title}</span>
                         </div>
                     `;
                     stepsContainer.insertAdjacentHTML('beforeend', stepHtml);
                 });
 
-                // --- BUCLE DE ANIMACIÓN ---
+                // Bucle de animación paso a paso
                 for (let i = 0; i < steps.length; i++) {
                     const step = steps[i];
                     const stepEl = document.getElementById(`step-${i}`);
                     const iconEl = document.getElementById(`icon-${i}`);
                     
-                    // Actualizar Título de Fase
-                    if (processTitle.textContent !== step.phase) {
-                        processTitle.textContent = step.phase;
-                    }
-
-                    // Auto Scroll
-                    if(i > 0) stepsContainer.scrollTop = (i * 60) - 60; 
-
-                    // Activar Estilos visuales del paso actual
-                    stepEl.classList.remove('opacity-50', 'border-transparent');
-                    stepEl.classList.add('bg-blue-50', 'border-blue-100', 'shadow-sm');
-                    stepEl.querySelector('span').classList.remove('text-gray-500');
+                    // Activar paso visualmente
+                    stepEl.classList.remove('opacity-40', 'border-transparent');
+                    stepEl.classList.add('bg-blue-50', 'border-blue-100', 'shadow-sm', 'pl-4');
                     stepEl.querySelector('span').classList.add('text-primary', 'font-bold');
-                    iconEl.innerHTML = `<i class="fas fa-spinner fa-spin text-primary text-xl"></i>`;
+                    iconEl.innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i>`;
                     progressText.textContent = step.title;
 
-                    // --- LÓGICA DE TIEMPO (Aquí ocurre la magia) ---
-                    
-                    // Si el servidor YA terminó, forzamos que este paso dure casi nada (5ms)
-                    // Si no, usamos la duración normal definida en el array steps.
+                    // Auto Scroll
+                    if(i > 1) stepsContainer.scrollTop = (i - 1) * 40; 
+
+                    // LÓGICA DE TIEMPO (Aceleración si el servidor termina)
                     let stepDuration = isServerDone ? 50 : step.duration;
                     let intervalTime = isServerDone ? 10 : 100; 
 
                     const stepsCount = stepDuration / intervalTime;
                     
                     for(let t=0; t < stepsCount; t++) {
-                        // VERIFICACIÓN CONSTANTE: 
-                        // Si a mitad de un paso largo el servidor termina, rompemos el ciclo actual
-                        // para pasar al siguiente paso inmediatamente en modo "rápido".
-                        if (isServerDone && intervalTime === 100) {
-                            break; 
-                        }
+                        // Si el servidor termina en medio de un paso largo, romper para acelerar
+                        if (isServerDone && intervalTime === 100) break; 
 
                         await new Promise(r => setTimeout(r, intervalTime));
                         
-                        // Solo actualizamos la barra si estamos en modo normal
-                        // En modo rápido, la barra se llenará sola al final
                         if (!isServerDone) {
                             currentTotalProgress += intervalTime;
-                            const percent = Math.min(Math.round((currentTotalProgress / totalDuration) * 100), 95); // Tope en 95% hasta finalizar
-                            progressBar.style.width = `${percent}%`;
-                            progressPercent.textContent = `${percent}%`;
+                            const percent = Math.min(Math.round((currentTotalProgress / totalDuration) * 100), 95);
+                            updateProgress(percent);
                         }
                     }
 
-                    // Completar el paso visualmente
-                    stepEl.classList.remove('bg-blue-50', 'border-blue-100', 'shadow-sm');
+                    // Completar paso visualmente
+                    stepEl.classList.remove('bg-blue-50', 'border-blue-100', 'shadow-sm', 'pl-4');
                     stepEl.classList.add('opacity-60'); 
                     stepEl.querySelector('span').classList.remove('text-primary', 'font-bold');
-                    stepEl.querySelector('span').classList.add('text-gray-700');
-                    iconEl.innerHTML = `<i class="fas fa-check-circle text-green-500 text-xl"></i>`;
+                    iconEl.innerHTML = `<i class="fas fa-check-circle text-green-500"></i>`;
                 }
                 
-                // Finalización Forzada Visual (100%)
-                progressBar.style.width = `100%`;
-                progressPercent.textContent = `100%`;
+                // Finalización visual forzada (100%)
+                updateProgress(100);
                 progressText.textContent = "¡Análisis completado!";
-                
-                // Pequeña pausa para que el usuario vea el 100%
                 await new Promise(r => setTimeout(r, 500));
+            }
+
+            function updateProgress(percent) {
+                progressBar.style.width = `${percent}%`;
+                progressPercent.textContent = `${percent}%`;
             }
         });
     </script>
